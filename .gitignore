@@ -8,3 +8,7 @@ coverage/
 deployments/*.json
 !deployments/.gitkeep
 .DS_Store
+-e 
+# Environment files
+*.env
+*.env.*
