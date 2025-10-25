@@ -1,0 +1,59 @@
+# Node modules
+node_modules/
+frontend/node_modules/
+backend/__pycache__/
+
+# Hardhat
+cache/
+artifacts/
+typechain-types/
+
+# Environment - NEVER commit these!
+.env
+.env.local
+*.env
+**/*private*
+**/*secret*
+**/*key*.txt
+
+# Testing
+coverage/
+coverage.json
+
+# Build
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Deployment records (keep template)
+deployments/*.json
+!deployments/.gitkeep
+
+# Frontend build
+frontend/build/
+frontend/dist/
+
+# Python
+*.pyc
+__pycache__/
+venv/
+
+# Emergent specific
+.emergent/
+
+# Lock files (too large)
+yarn.lock
+frontend/yarn.lock
+package-lock.json
+
+# Temp
+*.tmp
+*.temp
