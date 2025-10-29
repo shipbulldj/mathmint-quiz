@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMint Quiz - Demo</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .status-label {
+            font-weight: 600;
+        }
+
+        .status-value {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 3px 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        .result {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .success {
+            background: rgba(16, 185, 129, 0.3);
+            border-left: 4px solid #10b981;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.3);
+            border-left: 4px solid #ef4444;
+        }
+
+        .leaderboard-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rank {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .contract-info {
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎮 MathMint Quiz</h1>
+            <p class="subtitle">Smart Contract Demo - Mezo Bitcoin L2</p>
+        </div>
+
+        <!-- Wallet Connection -->
+        <div class="card">
+            <h2>🔐 Wallet Connection</h2>
+            <div id="walletStatus" class="status">
+                <div class="status-item">
+                    <span class="status-label">Status:</span>
+                    <span class="status-value" id="connectionStatus">Not Connected</span>
+                </div>
+                <div class="status-item hidden" id="addressDisplay">
+                    <span class="status-label">Address:</span>
+                    <span class="status-value" id="walletAddress"></span>
+                </div>
+                <div class="status-item hidden" id="balanceDisplay">
+                    <span class="status-label">Balance:</span>
+                    <span class="status-value" id="walletBalance"></span>
+                </div>
+            </div>
+            <button id="connectBtn" class="btn-primary">Connect MetaMask</button>
+            <button id="disconnectBtn" class="btn-danger hidden">Disconnect</button>
+            
+            <div class="info-box">
+                <strong>ℹ️ Network:</strong> Mezo Testnet<br>
+                <strong>RPC:</strong> https://rpc.test.mezo.org<br>
+                <strong>Explorer:</strong> <a href="https://explorer.test.mezo.org" target="_blank" style="color: #ffd89b;">explorer.test.mezo.org</a>
+            </div>
+        </div>
+
+        <!-- Quiz Contract Interactions -->
+        <div class="card">
+            <h2>📊 Quiz Contract</h2>
+            <div class="contract-info">
+                <strong>Contract:</strong> <a href="https://explorer.test.mezo.org/address/0x59bDB59107f29e9712A37c7015ee28675DD7d30f" target="_blank" style="color: #ffd89b;">0x59bDB59107f29e9712A37c7015ee28675DD7d30f</a>
+            </div>
+            
+            <div class="grid">
+                <div>
+                    <h3 style="margin: 15px 0 10px 0;">Update Score</h3>
+                    <input type="number" id="pointsInput" placeholder="Points to add (e.g., 50)" min="1" value="50">
+                    <button id="updateScoreBtn" class="btn-success" disabled>Submit Score</button>
+                </div>
+                
+                <div>
+                    <h3 style="margin: 15px 0 10px 0;">Check Score</h3>
+                    <button id="getScoreBtn" class="btn-primary" disabled>Get My Score</button>
+                    <button id="checkEligibilityBtn" class="btn-primary" disabled>Check NFT Eligibility</button>
+                </div>
+            </div>
+            
+            <div id="quizResult" class="result hidden"></div>
+        </div>
+
+        <!-- NFT Contract Interactions -->
+        <div class="card">
+            <h2>🎨 NFT Contract</h2>
+            <div class="contract-info">
+                <strong>Contract:</strong> <a href="https://explorer.test.mezo.org/address/0x03672f6b20622176554a4C0ba7B037d9dCE531f0" target="_blank" style="color: #ffd89b;">0x03672f6b20622176554a4C0ba7B037d9dCE531f0</a>
+            </div>
+            
+            <div>
+                <h3 style="margin: 15px 0 10px 0;">Mint NFT Badge</h3>
+                <input type="text" id="tokenUriInput" placeholder="Token URI (e.g., ipfs://...)" value="ipfs://QmMathMintBadge123">
+                <button id="mintNftBtn" class="btn-success" disabled>Mint NFT Badge</button>
+                <button id="checkMintBtn" class="btn-primary" disabled>Check Mint Status</button>
+            </div>
+            
+            <div id="nftResult" class="result hidden"></div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="card">
+            <h2>🏆 Leaderboard</h2>
+            <button id="getLeaderboardBtn" class="btn-primary" disabled>Refresh Leaderboard</button>
+            <div id="leaderboardResult" class="result hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        // Contract addresses
+        const QUIZ_CONTRACT = "0x59bDB59107f29e9712A37c7015ee28675DD7d30f";
+        const NFT_CONTRACT = "0x03672f6b20622176554a4C0ba7B037d9dCE531f0";
+        
+        // Contract ABIs (minimal for demo)
+        const QUIZ_ABI = [
+            "function updateScore(address user, uint256 points)",
+            "function getScore(address user) view returns (uint256)",
+            "function canMintNFT(address user) view returns (bool)",
+            "function getLeaderboard() view returns (address[], uint256[])",
+            "function getTotalPlayers() view returns (uint256)"
+        ];
+        
+        const NFT_ABI = [
+            "function mintBadge(string memory tokenURI)",
+            "function hasUserMinted(address user) view returns (bool)",
+            "function getUserTokenId(address user) view returns (uint256)",
+            "function totalMinted() view returns (uint256)"
+        ];
+
+        let provider, signer, quizContract, nftContract, userAddress;
+
+        // Initialize
+        window.addEventListener('load', () => {
+            setupEventListeners();
+            checkConnection();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('connectBtn').addEventListener('click', connectWallet);
+            document.getElementById('disconnectBtn').addEventListener('click', disconnectWallet);
+            document.getElementById('updateScoreBtn').addEventListener('click', updateScore);
+            document.getElementById('getScoreBtn').addEventListener('click', getScore);
+            document.getElementById('checkEligibilityBtn').addEventListener('click', checkEligibility);
+            document.getElementById('mintNftBtn').addEventListener('click', mintNFT);
+            document.getElementById('checkMintBtn').addEventListener('click', checkMintStatus);
+            document.getElementById('getLeaderboardBtn').addEventListener('click', getLeaderboard);
+        }
+
+        async function checkConnection() {
+            if (typeof window.ethereum !== 'undefined') {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                const accounts = await provider.listAccounts();
+                if (accounts.length > 0) {
+                    await initializeContracts();
+                }
+            }
+        }
+
+        async function connectWallet() {
+            try {
+                if (typeof window.ethereum === 'undefined') {
+                    alert('Please install MetaMask!');
+                    return;
+                }
+
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await initializeContracts();
+                
+                showResult('quizResult', '✅ Wallet connected successfully!', 'success');
+            } catch (error) {
+                showResult('quizResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function initializeContracts() {
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            userAddress = await signer.getAddress();
+            
+            quizContract = new ethers.Contract(QUIZ_CONTRACT, QUIZ_ABI, signer);
+            nftContract = new ethers.Contract(NFT_CONTRACT, NFT_ABI, signer);
+            
+            // Update UI
+            document.getElementById('connectionStatus').textContent = 'Connected';
+            document.getElementById('walletAddress').textContent = userAddress.substring(0, 6) + '...' + userAddress.substring(38);
+            document.getElementById('addressDisplay').classList.remove('hidden');
+            
+            const balance = await provider.getBalance(userAddress);
+            document.getElementById('walletBalance').textContent = ethers.utils.formatEther(balance) + ' tBTC';
+            document.getElementById('balanceDisplay').classList.remove('hidden');
+            
+            document.getElementById('connectBtn').classList.add('hidden');
+            document.getElementById('disconnectBtn').classList.remove('hidden');
+            
+            // Enable buttons
+            enableButtons();
+        }
+
+        function enableButtons() {
+            document.getElementById('updateScoreBtn').disabled = false;
+            document.getElementById('getScoreBtn').disabled = false;
+            document.getElementById('checkEligibilityBtn').disabled = false;
+            document.getElementById('mintNftBtn').disabled = false;
+            document.getElementById('checkMintBtn').disabled = false;
+            document.getElementById('getLeaderboardBtn').disabled = false;
+        }
+
+        function disconnectWallet() {
+            userAddress = null;
+            provider = null;
+            signer = null;
+            quizContract = null;
+            nftContract = null;
+            
+            document.getElementById('connectionStatus').textContent = 'Not Connected';
+            document.getElementById('addressDisplay').classList.add('hidden');
+            document.getElementById('balanceDisplay').classList.add('hidden');
+            document.getElementById('connectBtn').classList.remove('hidden');
+            document.getElementById('disconnectBtn').classList.add('hidden');
+            
+            document.querySelectorAll('button[id$="Btn"]:not(#connectBtn)').forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            showResult('quizResult', 'Disconnected', 'success');
+        }
+
+        async function updateScore() {
+            const points = document.getElementById('pointsInput').value;
+            if (!points || points <= 0) {
+                showResult('quizResult', '❌ Please enter valid points', 'error');
+                return;
+            }
+            
+            try {
+                showResult('quizResult', '⏳ Submitting score to blockchain...');
+                const tx = await quizContract.updateScore(userAddress, points);
+                showResult('quizResult', `⏳ Transaction sent: ${tx.hash}\nWaiting for confirmation...`);
+                
+                await tx.wait();
+                showResult('quizResult', `✅ Score updated successfully!\n\nTransaction: ${tx.hash}\nPoints added: ${points}`, 'success');
+            } catch (error) {
+                showResult('quizResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getScore() {
+            try {
+                showResult('quizResult', '⏳ Fetching score from blockchain...');
+                const score = await quizContract.getScore(userAddress);
+                showResult('quizResult', `✅ Your Score: ${score.toString()} points`, 'success');
+            } catch (error) {
+                showResult('quizResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkEligibility() {
+            try {
+                showResult('quizResult', '⏳ Checking NFT eligibility...');
+                const canMint = await quizContract.canMintNFT(userAddress);
+                const score = await quizContract.getScore(userAddress);
+                
+                if (canMint) {
+                    showResult('quizResult', `✅ Eligible to mint NFT!\n\nYour score: ${score.toString()} points\nRequired: 50 points\n\n🎉 You can mint your badge now!`, 'success');
+                } else {
+                    showResult('quizResult', `⚠️ Not eligible yet\n\nYour score: ${score.toString()} points\nRequired: 50 points\nNeed: ${50 - score.toString()} more points`, 'error');
+                }
+            } catch (error) {
+                showResult('quizResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function mintNFT() {
+            const tokenUri = document.getElementById('tokenUriInput').value;
+            if (!tokenUri) {
+                showResult('nftResult', '❌ Please enter token URI', 'error');
+                return;
+            }
+            
+            try {
+                showResult('nftResult', '⏳ Minting NFT...');
+                const tx = await nftContract.mintBadge(tokenUri);
+                showResult('nftResult', `⏳ Transaction sent: ${tx.hash}\nWaiting for confirmation...`);
+                
+                const receipt = await tx.wait();
+                showResult('nftResult', `✅ NFT Minted Successfully!\n\nTransaction: ${tx.hash}\nToken URI: ${tokenUri}\n\n🎉 Check your wallet for the NFT!`, 'success');
+            } catch (error) {
+                showResult('nftResult', `❌ Error: ${error.message}\n\nMake sure you have:\n- 50+ points\n- Haven't minted before\n- Enough gas (tBTC)`, 'error');
+            }
+        }
+
+        async function checkMintStatus() {
+            try {
+                showResult('nftResult', '⏳ Checking mint status...');
+                const hasMinted = await nftContract.hasUserMinted(userAddress);
+                
+                if (hasMinted) {
+                    const tokenId = await nftContract.getUserTokenId(userAddress);
+                    showResult('nftResult', `✅ You have minted an NFT!\n\nToken ID: ${tokenId.toString()}\n\nView in explorer:\nhttps://explorer.test.mezo.org/address/${userAddress}`, 'success');
+                } else {
+                    showResult('nftResult', `ℹ️ You haven't minted an NFT yet\n\nEarn 50 points to become eligible!`, 'error');
+                }
+            } catch (error) {
+                showResult('nftResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getLeaderboard() {
+            try {
+                showResult('leaderboardResult', '⏳ Fetching leaderboard from blockchain...');
+                const [addresses, scores] = await quizContract.getLeaderboard();
+                
+                if (addresses.length === 0) {
+                    showResult('leaderboardResult', 'No players yet. Be the first!', 'error');
+                    return;
+                }
+                
+                let leaderboardHtml = '<div style="color: white;">';
+                addresses.forEach((addr, index) => {
+                    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+                    leaderboardHtml += `
+                        <div class="leaderboard-item">
+                            <div>
+                                <span class="rank">${medal}</span>
+                                <span>${addr.substring(0, 6)}...${addr.substring(38)}</span>
+                            </div>
+                            <div style="font-weight: bold; font-size: 1.2em;">
+                                ${scores[index].toString()} pts
+                            </div>
+                        </div>
+                    `;
+                });
+                leaderboardHtml += '</div>';
+                
+                document.getElementById('leaderboardResult').innerHTML = leaderboardHtml;
+                document.getElementById('leaderboardResult').classList.remove('hidden', 'error', 'success');
+            } catch (error) {
+                showResult('leaderboardResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showResult(elementId, message, type = '') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.remove('hidden', 'success', 'error');
+            if (type) element.classList.add(type);
+        }
+
+        // Handle account changes
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    disconnectWallet();
+                } else {
+                    location.reload();
+                }
+            });
+            
+            window.ethereum.on('chainChanged', () => {
+                location.reload();
+            });
+        }
+    </script>
+</body>
+</html>
