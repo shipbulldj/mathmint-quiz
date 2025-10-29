@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MathMint Quiz Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        body { font-family: Arial; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { background: rgba(255,255,255,0.1); padding: 20px; margin: 20px 0; border-radius: 10px; }
+        button { background: #4facfe; color: white; border: none; padding: 12px 24px; margin: 5px; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #00f2fe; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd; }
+        .result { background: rgba(0,0,0,0.3); padding: 15px; margin-top: 10px; border-radius: 5px; font-family: monospace; }
+        .success { background: rgba(16,185,129,0.3); }
+        .error { background: rgba(239,68,68,0.3); }
+        .hidden { display: none; }
+        h1 { text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MathMint Quiz - Demo</h1>
+        
+        <div class="card">
+            <h2>Wallet Connection</h2>
+            <p id="status">Not Connected</p>
+            <p id="address" class="hidden"></p>
+            <button id="connectBtn" onclick="connect()">Connect MetaMask</button>
+        </div>
+
+        <div class="card">
+            <h2>Quiz Contract</h2>
+            <input type="number" id="points" value="50" placeholder="Points">
+            <button id="submitBtn" onclick="submitScore()" disabled>Submit Score</button>
+            <button id="scoreBtn" onclick="getScore()" disabled>Get Score</button>
+            <button id="eligibleBtn" onclick="checkEligible()" disabled>Check Eligibility</button>
+            <div id="quizResult" class="result hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>NFT Contract</h2>
+            <input type="text" id="tokenUri" value="ipfs://QmMathMint123" placeholder="Token URI">
+            <button id="mintBtn" onclick="mintNFT()" disabled>Mint NFT</button>
+            <button id="statusBtn" onclick="checkMintStatus()" disabled>Check Status</button>
+            <div id="nftResult" class="result hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>Leaderboard</h2>
+            <button id="leaderBtn" onclick="getLeaderboard()" disabled>Get Leaderboard</button>
+            <div id="leaderResult" class="result hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_ADDR = "0x59bDB59107f29e9712A37c7015ee28675DD7d30f";
+        const NFT_ADDR = "0x03672f6b20622176554a4C0ba7B037d9dCE531f0";
+        
+        const QUIZ_ABI = [
+            "function updateScore(address user, uint256 points)",
+            "function getScore(address user) view returns (uint256)",
+            "function canMintNFT(address user) view returns (bool)",
+            "function getLeaderboard() view returns (address[], uint256[])"
+        ];
+        
+        const NFT_ABI = [
+            "function mintBadge(string memory tokenURI)",
+            "function hasUserMinted(address user) view returns (bool)",
+            "function getUserTokenId(address user) view returns (uint256)"
+        ];
+
+        let provider, signer, quiz, nft, userAddr;
+
+        async function connect() {
+            try {
+                if (!window.ethereum) {
+                    alert("Install MetaMask!");
+                    return;
+                }
+                
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddr = await signer.getAddress();
+                
+                quiz = new ethers.Contract(QUIZ_ADDR, QUIZ_ABI, signer);
+                nft = new ethers.Contract(NFT_ADDR, NFT_ABI, signer);
+                
+                document.getElementById('status').textContent = 'Connected!';
+                document.getElementById('address').textContent = 'Address: ' + userAddr;
+                document.getElementById('address').classList.remove('hidden');
+                
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('scoreBtn').disabled = false;
+                document.getElementById('eligibleBtn').disabled = false;
+                document.getElementById('mintBtn').disabled = false;
+                document.getElementById('statusBtn').disabled = false;
+                document.getElementById('leaderBtn').disabled = false;
+                
+                show('quizResult', 'Wallet connected!', 'success');
+            } catch (err) {
+                show('quizResult', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function submitScore() {
+            try {
+                const pts = document.getElementById('points').value;
+                show('quizResult', 'Submitting...');
+                const tx = await quiz.updateScore(userAddr, pts);
+                show('quizResult', 'Waiting for confirmation...');
+                await tx.wait();
+                show('quizResult', 'Score submitted! TX: ' + tx.hash, 'success');
+            } catch (err) {
+                show('quizResult', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function getScore() {
+            try {
+                show('quizResult', 'Loading...');
+                const score = await quiz.getScore(userAddr);
+                show('quizResult', 'Your score: ' + score.toString() + ' points', 'success');
+            } catch (err) {
+                show('quizResult', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function checkEligible() {
+            try {
+                show('quizResult', 'Checking...');
+                const can = await quiz.canMintNFT(userAddr);
+                const score = await quiz.getScore(userAddr);
+                if (can) {
+                    show('quizResult', 'Eligible! Score: ' + score.toString(), 'success');
+                } else {
+                    show('quizResult', 'Not eligible. Score: ' + score.toString() + ' Need: 50', 'error');
+                }
+            } catch (err) {
+                show('quizResult', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function mintNFT() {
+            try {
+                const uri = document.getElementById('tokenUri').value;
+                show('nftResult', 'Minting...');
+                const tx = await nft.mintBadge(uri);
+                show('nftResult', 'Waiting for confirmation...');
+                await tx.wait();
+                show('nftResult', 'NFT Minted! TX: ' + tx.hash, 'success');
+            } catch (err) {
+                show('nftResult', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function checkMintStatus() {
+            try {
+                show('nftResult', 'Checking...');
+                const minted = await nft.hasUserMinted(userAddr);
+                if (minted) {
+                    const id = await nft.getUserTokenId(userAddr);
+                    show('nftResult', 'You have minted! Token ID: ' + id.toString(), 'success');
+                } else {
+                    show('nftResult', 'Not minted yet', 'error');
+                }
+            } catch (err) {
+                show('nftResult', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        async function getLeaderboard() {
+            try {
+                show('leaderResult', 'Loading...');
+                const result = await quiz.getLeaderboard();
+                const addrs = result[0];
+                const scores = result[1];
+                
+                if (addrs.length === 0) {
+                    show('leaderResult', 'No players yet', 'error');
+                    return;
+                }
+                
+                let html = '';
+                for (let i = 0; i < addrs.length; i++) {
+                    const short = addrs[i].substring(0, 6) + '...' + addrs[i].substring(38);
+                    html += (i+1) + '. ' + short + ' - ' + scores[i].toString() + ' pts<br>';
+                }
+                document.getElementById('leaderResult').innerHTML = html;
+                document.getElementById('leaderResult').classList.remove('hidden');
+            } catch (err) {
+                show('leaderResult', 'Error: ' + err.message, 'error');
+            }
+        }
+
+        function show(id, msg, cls) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.className = 'result';
+            if (cls) el.classList.add(cls);
+            el.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
