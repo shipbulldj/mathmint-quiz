@@ -573,8 +573,9 @@
 
         async function getScore() {
             try {
-                if (!userAddr || !quiz) {
-                    show('scoreResult', '⚠️ Please connect your wallet first!', 'warning');
+                const walletCheck = checkWalletConnected('view your total score');
+                if (!walletCheck.connected) {
+                    show('scoreResult', walletCheck.message, 'warning');
                     return;
                 }
                 show('scoreResult', '⏳ Fetching your total score...');
