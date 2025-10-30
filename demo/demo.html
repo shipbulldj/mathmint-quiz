@@ -272,17 +272,42 @@
 
         async function submitScore() {
             try {
-                const pts = document.getElementById('points').value;
+                let pts = parseInt(document.getElementById('points').value);
                 if (!pts || pts < 10) {
                     show('quizResult', '❌ Please enter at least 10 points', 'error');
                     return;
                 }
                 
-                show('quizResult', '⏳ Submitting score to blockchain...');
+                // Apply MUSD boost if enabled
+                let originalPts = pts;
+                if (boostEnabled && musdBalance >= 1) {
+                    pts = Math.floor(pts * 1.5);
+                    show('quizResult', '⚡ MUSD Boost Applied!\n\nOriginal: ' + originalPts + ' points\nBoosted: ' + pts + ' points (+' + (pts - originalPts) + ')\n\nSubmitting to blockchain...');
+                } else {
+                    show('quizResult', '⏳ Submitting score to blockchain...');
+                }
+                
                 const tx = await quiz.updateScore(userAddr, pts);
                 show('quizResult', '⏳ Transaction sent! Hash: ' + tx.hash + '\n\nWaiting for confirmation...');
                 await tx.wait();
-                show('quizResult', '✅ Score submitted successfully!\n\nTransaction: ' + tx.hash + '\nPoints added: ' + pts + '\n\nView on explorer: https://explorer.test.mezo.org/tx/' + tx.hash, 'success');
+                
+                let resultMsg = '✅ Score submitted successfully!\n\nTransaction: ' + tx.hash + '\nPoints recorded: ' + pts;
+                if (boostEnabled && musdBalance >= 1) {
+                    resultMsg += '\n\n⚡ MUSD Boost Applied: ' + originalPts + ' → ' + pts + ' points';
+                }
+                resultMsg += '\n\nView on explorer: https://explorer.test.mezo.org/tx/' + tx.hash;
+                
+                show('quizResult', resultMsg, 'success');
+                
+                // Reset boost after submission (single session)
+                if (boostEnabled) {
+                    document.getElementById('boostToggle').checked = false;
+                    boostEnabled = false;
+                    document.getElementById('boostActiveMsg').classList.add('hidden');
+                    setTimeout(() => {
+                        show('quizResult', resultMsg + '\n\n⚠️ Boost consumed for this session. Toggle again for next quiz.', 'success');
+                    }, 1000);
+                }
             } catch (err) {
                 show('quizResult', '❌ Error: ' + err.message + '\n\nMake sure you have enough tBTC for gas fees.', 'error');
             }
