@@ -522,6 +522,13 @@
 
         async function submitScore() {
             try {
+                // Check if wallet is connected
+                if (!userAddr || !quiz) {
+                    document.getElementById('walletRequiredMsg').classList.remove('hidden');
+                    show('quizResult', '⚠️ Please connect your wallet first to submit score to blockchain!\n\nScroll up to connect MetaMask.', 'warning');
+                    return;
+                }
+                
                 let pts = points;
                 
                 if (pts === 0) {
