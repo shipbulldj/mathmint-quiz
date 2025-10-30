@@ -685,6 +685,18 @@
             el.classList.remove('hidden');
         }
 
+        function checkWalletConnected(actionName) {
+            if (!userAddr || !quiz) {
+                return {
+                    connected: false,
+                    message: '⚠️ Wallet Required\n\n' + 
+                             'To ' + actionName + ', please connect your MetaMask wallet first.\n\n' +
+                             '👆 Scroll up to the "Wallet Connection" section and click "Connect MetaMask"'
+                };
+            }
+            return { connected: true };
+        }
+
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', () => location.reload());
             window.ethereum.on('chainChanged', () => location.reload());
