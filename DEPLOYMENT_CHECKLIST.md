@@ -1,0 +1,375 @@
+# 🚀 Complete Deployment Checklist
+
+This document provides a step-by-step checklist for deploying the complete MathMint Quiz application.
+
+## ✅ Pre-Deployment Checklist
+
+### 1. Smart Contracts (Already Deployed ✓)
+- [x] QuizContract deployed to Mezo testnet: `0x59bDB59107f29e9712A37c7015ee28675DD7d30f`
+- [x] MathMintNFT deployed to Mezo testnet: `0x03672f6b20622176554a4C0ba7B037d9dCE531f0`
+- [x] Contracts verified on Mezo explorer
+- [x] MUSD token address configured: `0x118917a40FAF1CD7a13dB0Ef56C86De7973Ac503`
+
+### 2. Frontend (demo.html)
+- [x] Quiz gameplay working without wallet
+- [x] MetaMask integration functional
+- [x] MUSD boost feature implemented
+- [x] Leaderboard accessible without wallet
+- [x] All blockchain operations have wallet checks
+- [x] Contract addresses hardcoded in demo.html
+- [x] UI/UX tested and responsive
+
+### 3. Documentation
+- [x] README.md updated with full project info
+- [x] WEB3_STORAGE_DEPLOYMENT.md created
+- [x] DEPLOYMENT_CHECKLIST.md (this file)
+- [x] QUICKSTART.md available
+- [x] Code comments and inline documentation
+
+## 🌐 IPFS Deployment Steps
+
+### Step 1: Prepare Environment
+
+```bash
+# Install Web3.Storage dependency
+yarn install
+
+# OR install globally for CLI
+npm install -g @web3-storage/w3cli
+```
+
+**Status:** ☐ Not started | ☐ In progress | ☐ Complete
+
+### Step 2: Get Web3.Storage API Token
+
+1. Visit https://web3.storage
+2. Sign up for free account
+3. Navigate to account settings
+4. Generate API token
+5. Copy token
+
+**Status:** ☐ Not started | ☐ In progress | ☐ Complete
+
+**Token saved securely:** ☐ Yes | ☐ No
+
+### Step 3: Deploy Using Node.js Script (Recommended)
+
+```bash
+# Set your API token
+export WEB3STORAGE_TOKEN="your-token-here"
+
+# Run deployment script
+yarn deploy:ipfs
+
+# OR
+node scripts/deploy-to-ipfs.js
+```
+
+**Status:** ☐ Not started | ☐ In progress | ☐ Complete
+
+**Expected Output:**
+```
+✅ Deployment Successful!
+
+📦 Content Identifier (CID):
+   bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi
+
+🌐 Access Your Demo At:
+   1. https://bafybeigdyrzt...ipfs.w3s.link
+   2. https://bafybeigdyrzt...ipfs.dweb.link
+```
+
+**CID Received:** ☐ Yes | ☐ No
+
+**CID:** `_______________________________________`
+
+### Step 4: Alternative CLI Deployment
+
+```bash
+# Set token
+export WEB3STORAGE_TOKEN="your-token-here"
+
+# Deploy
+cd demo
+w3 put demo.html --name "MathMint Quiz"
+```
+
+**Status:** ☐ Used script | ☐ Used CLI | ☐ Skipped
+
+### Step 5: Verify Deployment
+
+Test each gateway URL:
+
+1. **w3s.link gateway:** ☐ Working | ☐ Not working | ☐ Slow
+   - URL: `https://[CID].ipfs.w3s.link`
+
+2. **dweb.link gateway:** ☐ Working | ☐ Not working | ☐ Slow
+   - URL: `https://[CID].ipfs.dweb.link`
+
+3. **Direct w3s.link:** ☐ Working | ☐ Not working | ☐ Slow
+   - URL: `https://w3s.link/ipfs/[CID]`
+
+**Notes on gateway performance:**
+```
+________________________________________________
+________________________________________________
+```
+
+### Step 6: Test Deployed Application
+
+#### Basic Functionality Tests
+
+1. **Page Loads:** ☐ Pass | ☐ Fail
+   - [ ] No console errors
+   - [ ] All styles load correctly
+   - [ ] UI renders properly
+
+2. **Quiz Without Wallet:** ☐ Pass | ☐ Fail
+   - [ ] Can start quiz
+   - [ ] Questions display
+   - [ ] Timer works
+   - [ ] Can answer questions
+   - [ ] See results
+
+3. **Wallet Connection:** ☐ Pass | ☐ Fail
+   - [ ] MetaMask prompts appear
+   - [ ] Can connect wallet
+   - [ ] Network switch works (to Mezo testnet)
+   - [ ] Address displays correctly
+   - [ ] Balance shows
+
+4. **MUSD Boost:** ☐ Pass | ☐ Fail | ☐ N/A (no MUSD)
+   - [ ] Boost section appears if MUSD balance > 1
+   - [ ] Toggle works
+   - [ ] Points multiplier applies
+
+5. **Score Submission:** ☐ Pass | ☐ Fail
+   - [ ] Transaction prompts
+   - [ ] Transaction confirms
+   - [ ] Score saved on-chain
+
+6. **NFT Functions:** ☐ Pass | ☐ Fail
+   - [ ] Check score works
+   - [ ] Check eligibility works
+   - [ ] Mint NFT works (if eligible)
+
+7. **Leaderboard:** ☐ Pass | ☐ Fail
+   - [ ] Loads without wallet
+   - [ ] Shows top players
+   - [ ] Updates after score submission
+
+#### Cross-Browser Testing
+
+- [ ] **Chrome/Brave:** ☐ Working | ☐ Issues
+- [ ] **Firefox:** ☐ Working | ☐ Issues
+- [ ] **Safari:** ☐ Working | ☐ Issues
+- [ ] **Edge:** ☐ Working | ☐ Issues
+
+**Issues found:**
+```
+________________________________________________
+________________________________________________
+```
+
+#### Mobile Testing
+
+- [ ] **Mobile Chrome:** ☐ Working | ☐ Issues
+- [ ] **Mobile Safari:** ☐ Working | ☐ Issues
+- [ ] **Mobile Firefox:** ☐ Working | ☐ Issues
+
+**Mobile-specific issues:**
+```
+________________________________________________
+________________________________________________
+```
+
+## 📝 Post-Deployment Tasks
+
+### 1. Documentation Updates
+
+- [ ] Update README.md with IPFS URL
+- [ ] Add CID to DEPLOYMENT_CID.txt (auto-generated by script)
+- [ ] Document any issues encountered
+- [ ] Update CHANGELOG if exists
+
+**IPFS URL to add to README:**
+```
+https://[YOUR-CID].ipfs.w3s.link
+```
+
+### 2. Share URLs
+
+Share your deployed app at:
+
+- [ ] **Twitter/X:** ☐ Posted | ☐ N/A
+- [ ] **Discord:** ☐ Posted | ☐ N/A
+- [ ] **GitHub README:** ☐ Updated | ☐ N/A
+- [ ] **Personal website:** ☐ Updated | ☐ N/A
+- [ ] **Other:** _________________
+
+### 3. Monitor Deployment
+
+Check periodically:
+
+- [ ] IPFS gateways still accessible
+- [ ] Smart contracts still functioning
+- [ ] No errors reported by users
+- [ ] Gas costs reasonable
+
+### 4. Optional: Custom Domain
+
+If you want a custom domain pointing to your IPFS content:
+
+**Option A: DNSLink**
+- [ ] Add TXT record: `_dnslink.yourdomain.com` → `dnslink=/ipfs/[CID]`
+- [ ] Access at: `https://yourdomain.com.ipfs.dweb.link`
+
+**Option B: ENS Domain (Ethereum Name Service)**
+- [ ] Register ENS domain
+- [ ] Set content hash to IPFS CID
+- [ ] Access at: `https://yourname.eth.limo`
+
+**Status:** ☐ Using custom domain | ☐ Using IPFS gateway URLs | ☐ Planning for future
+
+### 5. Backup and Version Control
+
+- [ ] Save CID for this version
+- [ ] Commit all code to Git
+- [ ] Tag release with version number
+- [ ] Push to GitHub/GitLab
+
+```bash
+git add .
+git commit -m "Deploy v1.0.0 to IPFS - CID: [YOUR-CID]"
+git tag v1.0.0
+git push origin main --tags
+```
+
+**Git status:** ☐ Complete | ☐ Pending | ☐ N/A
+
+## 🔄 Future Updates
+
+When you need to update the demo:
+
+### Update Process
+
+1. [ ] Make changes to demo.html locally
+2. [ ] Test changes thoroughly
+3. [ ] Re-run deployment script
+4. [ ] Get new CID
+5. [ ] Test new deployment
+6. [ ] Update documentation with new CID
+7. [ ] Announce update to users
+
+**Note:** Each update creates a NEW CID. The old CID remains accessible (IPFS is immutable).
+
+### Version History
+
+Track your deployments:
+
+| Version | Date | CID | Notes |
+|---------|------|-----|-------|
+| v1.0.0  | YYYY-MM-DD | `bafybei...` | Initial deployment |
+| v1.1.0  | YYYY-MM-DD | `bafybei...` | Bug fixes |
+|         |            |              |  |
+
+## 🆘 Troubleshooting
+
+### Issue: Gateway Not Loading
+
+**Symptoms:** IPFS URL shows "Not Found" or loading forever
+
+**Solutions:**
+- [ ] Wait 2-5 minutes for IPFS propagation
+- [ ] Try different gateway URL
+- [ ] Check CID is correct
+- [ ] Verify file was uploaded successfully
+
+### Issue: MetaMask Not Connecting
+
+**Symptoms:** Wallet connection fails or times out
+
+**Solutions:**
+- [ ] Check user has MetaMask installed
+- [ ] Verify Mezo testnet is added to MetaMask
+- [ ] Check RPC URL is correct
+- [ ] Try hard refresh (Ctrl+Shift+R)
+
+### Issue: Contract Functions Failing
+
+**Symptoms:** Transactions revert or fail
+
+**Solutions:**
+- [ ] Check user has tBTC for gas
+- [ ] Verify contract addresses are correct
+- [ ] Check Mezo testnet is operational
+- [ ] Review contract ABI matches deployed contract
+
+### Issue: MUSD Boost Not Showing
+
+**Symptoms:** Boost section doesn't appear
+
+**Solutions:**
+- [ ] Verify user has 1+ MUSD in wallet
+- [ ] Check MUSD token address is correct
+- [ ] Ensure wallet is connected
+- [ ] Check console for MUSD balance fetch errors
+
+## ✨ Success Criteria
+
+Your deployment is successful when:
+
+- [x] Demo.html deployed to IPFS with valid CID
+- [ ] Accessible via at least 2 different gateways
+- [ ] All quiz features work without wallet
+- [ ] MetaMask connection works
+- [ ] Score submission works
+- [ ] NFT minting works (for eligible users)
+- [ ] Leaderboard loads
+- [ ] No critical errors in console
+- [ ] Tested on multiple browsers
+- [ ] Documentation updated
+- [ ] URLs shared with community
+
+## 📊 Deployment Metrics
+
+Track your deployment:
+
+**Deployment Date:** _______________
+
+**Time to Deploy:** ___________ (from start to accessible URL)
+
+**File Size:** ___________ KB
+
+**Number of Gateway URLs:** ___________
+
+**Initial Test Results:**
+- Successful tests: _____ / _____
+- Failed tests: _____
+- Issues found: _____
+
+**User Feedback:**
+```
+________________________________________________
+________________________________________________
+________________________________________________
+```
+
+## 🎉 Congratulations!
+
+Once all checkboxes are complete, your MathMint Quiz is fully deployed on IPFS and ready for users worldwide!
+
+**Your Deployment URLs:**
+- 🌐 Primary: `_____________________________________________`
+- 🌐 Backup: `_____________________________________________`
+- 🌐 Direct: `_____________________________________________`
+
+**Share these URLs and let the learning begin!** 🎮📚✨
+
+---
+
+**Need Help?**
+- Web3.Storage Docs: https://web3.storage/docs
+- IPFS Docs: https://docs.ipfs.tech
+- Mezo Docs: https://docs.mezo.org
+- Project Issues: Create an issue on GitHub
