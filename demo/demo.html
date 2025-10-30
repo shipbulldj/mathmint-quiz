@@ -588,8 +588,9 @@
 
         async function checkEligible() {
             try {
-                if (!userAddr || !quiz) {
-                    show('scoreResult', '⚠️ Please connect your wallet first!', 'warning');
+                const walletCheck = checkWalletConnected('check NFT eligibility');
+                if (!walletCheck.connected) {
+                    show('scoreResult', walletCheck.message, 'warning');
                     return;
                 }
                 show('scoreResult', '⏳ Checking eligibility...');
