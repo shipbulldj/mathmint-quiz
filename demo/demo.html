@@ -120,8 +120,15 @@
             "function hasUserMinted(address user) view returns (bool)",
             "function getUserTokenId(address user) view returns (uint256)"
         ];
+        
+        const MUSD_ABI = [
+            "function balanceOf(address account) view returns (uint256)",
+            "function decimals() view returns (uint8)"
+        ];
 
-        let provider, signer, quiz, nft, userAddr, currentChainId;
+        let provider, signer, quiz, nft, musd, userAddr, currentChainId;
+        let musdBalance = 0;
+        let boostEnabled = false;
 
         async function connect() {
             try {
