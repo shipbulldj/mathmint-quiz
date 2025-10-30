@@ -629,8 +629,9 @@
 
         async function checkMintStatus() {
             try {
-                if (!userAddr || !nft) {
-                    show('nftResult', '⚠️ Please connect your wallet first!', 'warning');
+                const walletCheck = checkWalletConnected('check your mint status');
+                if (!walletCheck.connected) {
+                    show('nftResult', walletCheck.message, 'warning');
                     return;
                 }
                 show('nftResult', '⏳ Checking...');
