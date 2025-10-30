@@ -608,8 +608,9 @@
 
         async function mintNFT() {
             try {
-                if (!userAddr || !nft) {
-                    show('nftResult', '⚠️ Please connect your wallet first!', 'warning');
+                const walletCheck = checkWalletConnected('mint your NFT badge');
+                if (!walletCheck.connected) {
+                    show('nftResult', walletCheck.message, 'warning');
                     return;
                 }
                 const uri = document.getElementById('tokenUri').value;
