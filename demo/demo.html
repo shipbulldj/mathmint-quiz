@@ -213,6 +213,35 @@
             }
         }
 
+        async function checkMUSDBalance() {
+            try {
+                const balance = await musd.balanceOf(userAddr);
+                const decimals = await musd.decimals();
+                const balanceFormatted = ethers.utils.formatUnits(balance, decimals);
+                musdBalance = parseFloat(balanceFormatted);
+                
+                if (musdBalance >= 1) {
+                    document.getElementById('musdBoostSection').classList.remove('hidden');
+                    document.getElementById('musdBalanceDisplay').textContent = '💰 Your MUSD Balance: ' + musdBalance.toFixed(2) + ' MUSD';
+                }
+            } catch (err) {
+                console.log('MUSD balance check failed:', err.message);
+            }
+        }
+
+        function toggleBoost() {
+            const toggle = document.getElementById('boostToggle');
+            boostEnabled = toggle.checked;
+            
+            if (boostEnabled) {
+                document.getElementById('boostActiveMsg').classList.remove('hidden');
+                show('quizResult', '⚡ MUSD Boost Activated! You will earn 1.5x points (15 per correct answer)', 'success');
+            } else {
+                document.getElementById('boostActiveMsg').classList.add('hidden');
+                show('quizResult', 'Boost deactivated. Back to normal scoring (10 per correct)', 'warning');
+            }
+        }
+
         async function switchNetwork() {
             try {
                 // Try to switch to Mezo testnet
