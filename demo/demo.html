@@ -59,7 +59,8 @@
         
         <!-- Step 1: Wallet Connection -->
         <div class="card" id="walletCard">
-            <h2>🔐 Step 1: Connect Wallet</h2>
+            <h2>🔐 Wallet Connection (Optional)</h2>
+            <p>Connect wallet to submit scores, mint NFTs, and view leaderboard</p>
             <p id="status">Not Connected</p>
             <p id="network" class="hidden"></p>
             <p id="address" class="hidden"></p>
@@ -68,6 +69,7 @@
             <button id="switchBtn" class="success hidden" onclick="switchNetwork()">Switch to Mezo Testnet</button>
             
             <div class="info-box">
+                <strong>ℹ️ Play Without Wallet:</strong> You can play the quiz anytime! Connect only when you want to save scores on blockchain.<br>
                 <strong>ℹ️ Need MetaMask?</strong> Install from <a href="https://metamask.io" target="_blank" style="color: #4facfe;">metamask.io</a><br>
                 <strong>ℹ️ Need tBTC?</strong> Get from <a href="https://faucet.mezo.org" target="_blank" style="color: #4facfe;">Mezo Faucet</a><br>
                 <strong>⚡ MUSD Boost?</strong> Hold 1+ MUSD to unlock 1.5x point multiplier!
@@ -75,8 +77,8 @@
         </div>
 
         <!-- Step 2: Play Quiz -->
-        <div class="card hidden" id="quizCard">
-            <h2>📊 Step 2: Play Quiz</h2>
+        <div class="card" id="quizCard">
+            <h2>📊 Play Quiz (No Wallet Required!)</h2>
             
             <!-- MUSD Boost Section -->
             <div id="musdBoostSection" class="hidden" style="background: rgba(255,215,0,0.1); border: 2px solid rgba(255,215,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
