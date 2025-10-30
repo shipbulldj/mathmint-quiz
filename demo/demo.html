@@ -572,6 +572,10 @@
 
         async function getScore() {
             try {
+                if (!userAddr || !quiz) {
+                    show('scoreResult', '⚠️ Please connect your wallet first!', 'warning');
+                    return;
+                }
                 show('scoreResult', '⏳ Fetching your total score...');
                 const score = await quiz.getScore(userAddr);
                 show('scoreResult', '✅ Your Total Score: ' + score.toString() + ' points\n\n' + (score >= 50 ? '🎉 Eligible to mint NFT!' : '⚠️ Need ' + (50 - score) + ' more points'), score >= 50 ? 'success' : 'warning');
@@ -582,6 +586,10 @@
 
         async function checkEligible() {
             try {
+                if (!userAddr || !quiz) {
+                    show('scoreResult', '⚠️ Please connect your wallet first!', 'warning');
+                    return;
+                }
                 show('scoreResult', '⏳ Checking eligibility...');
                 const can = await quiz.canMintNFT(userAddr);
                 const score = await quiz.getScore(userAddr);
@@ -597,6 +605,10 @@
 
         async function mintNFT() {
             try {
+                if (!userAddr || !nft) {
+                    show('nftResult', '⚠️ Please connect your wallet first!', 'warning');
+                    return;
+                }
                 const uri = document.getElementById('tokenUri').value;
                 show('nftResult', '⏳ Minting NFT...');
                 const tx = await nft.mintBadge(uri);
@@ -613,6 +625,10 @@
 
         async function checkMintStatus() {
             try {
+                if (!userAddr || !nft) {
+                    show('nftResult', '⚠️ Please connect your wallet first!', 'warning');
+                    return;
+                }
                 show('nftResult', '⏳ Checking...');
                 const minted = await nft.hasUserMinted(userAddr);
                 if (minted) {
@@ -628,6 +644,10 @@
 
         async function getLeaderboard() {
             try {
+                if (!quiz) {
+                    show('leaderResult', '⚠️ Please connect your wallet first to view leaderboard!', 'warning');
+                    return;
+                }
                 show('leaderResult', '⏳ Loading...');
                 const result = await quiz.getLeaderboard();
                 const addrs = result[0];
@@ -642,7 +662,7 @@
                 for (let i = 0; i < addrs.length; i++) {
                     const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.';
                     const short = addrs[i].substring(0, 6) + '...' + addrs[i].substring(38);
-                    const isYou = addrs[i].toLowerCase() === userAddr.toLowerCase() ? ' (YOU)' : '';
+                    const isYou = userAddr && addrs[i].toLowerCase() === userAddr.toLowerCase() ? ' (YOU)' : '';
                     html += '<div style="padding: 8px; margin: 5px 0; background: rgba(255,255,255,0.1); border-radius: 5px;">';
                     html += '<span style="display: inline-block; width: 30px;">' + medal + '</span>';
                     html += '<span>' + short + isYou + '</span>';
