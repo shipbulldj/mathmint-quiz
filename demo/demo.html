@@ -649,10 +649,46 @@
 
         async function getLeaderboard() {
             try {
+                // Leaderboard can be viewed without wallet, but show better message if not connected
                 if (!quiz) {
-                    show('leaderResult', '⚠️ Please connect your wallet first to view leaderboard!', 'warning');
-                    return;
+                    // Create read-only provider to view leaderboard without wallet
+                    try {
+                        const readProvider = new ethers.providers.JsonRpcProvider(MEZO_TESTNET.rpcUrls[0]);
+                        const readQuiz = new ethers.Contract(QUIZ_ADDR, QUIZ_ABI, readProvider);
+                        
+                        show('leaderResult', '⏳ Loading leaderboard...');
+                        const result = await readQuiz.getLeaderboard();
+                        const addrs = result[0];
+                        const scores = result[1];
+                        
+                        if (addrs.length === 0) {
+                            show('leaderResult', 'No players yet! 🚀\n\nBe the first to play and submit a score!', 'warning');
+                            return;
+                        }
+                        
+                        let html = '<div style="color: white;"><strong>🏆 Top Players</strong><br><br>';
+                        html += '<div style="background: rgba(251,191,36,0.2); padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 12px;">';
+                        html += 'ℹ️ Connect wallet to see if you\'re on the leaderboard';
+                        html += '</div>';
+                        for (let i = 0; i < addrs.length; i++) {
+                            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.';
+                            const short = addrs[i].substring(0, 6) + '...' + addrs[i].substring(38);
+                            html += '<div style="padding: 8px; margin: 5px 0; background: rgba(255,255,255,0.1); border-radius: 5px;">';
+                            html += '<span style="display: inline-block; width: 30px;">' + medal + '</span>';
+                            html += '<span>' + short + '</span>';
+                            html += '<span style="float: right; font-weight: bold;">' + scores[i] + ' pts</span>';
+                            html += '</div>';
+                        }
+                        html += '</div>';
+                        document.getElementById('leaderResult').innerHTML = html;
+                        document.getElementById('leaderResult').classList.remove('hidden');
+                        return;
+                    } catch (readErr) {
+                        show('leaderResult', '⚠️ Unable to load leaderboard\n\n' + readErr.message + '\n\nTip: Connect your wallet for better experience', 'warning');
+                        return;
+                    }
                 }
+                
                 show('leaderResult', '⏳ Loading...');
                 const result = await quiz.getLeaderboard();
                 const addrs = result[0];
