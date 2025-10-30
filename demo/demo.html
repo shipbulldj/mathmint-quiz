@@ -161,6 +161,10 @@
                 // Initialize contracts
                 quiz = new ethers.Contract(QUIZ_ADDR, QUIZ_ABI, signer);
                 nft = new ethers.Contract(NFT_ADDR, NFT_ABI, signer);
+                musd = new ethers.Contract(MUSD_ADDR, MUSD_ABI, signer);
+                
+                // Check MUSD balance
+                await checkMUSDBalance();
                 
                 // Update UI
                 document.getElementById('status').textContent = '✅ Connected!';
