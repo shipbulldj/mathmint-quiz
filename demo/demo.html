@@ -779,13 +779,7 @@
                 
                 document.getElementById('submitScoreBtn').disabled = true;
                 
-                // Determine MUSD address to use
-                let musdToUse = '0x0000000000000000000000000000000000000000'; // Zero address if no MUSD boost
-                if (boostEnabled && musdBalance >= 1) {
-                    musdToUse = MUSD_ADDR;
-                }
-                
-                const tx = await quiz.submitScore(pts, musdToUse);
+                const tx = await quiz.updateScore(userAddr, pts);
                 show('quizResult', '⏳ Transaction sent! Hash: ' + tx.hash + '\n\nWaiting for confirmation...');
                 await tx.wait();
                 
