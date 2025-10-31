@@ -101,6 +101,7 @@ DEPLOYMENT_GUIDE.md            - Contract deployment guide
 ```
 USER_GUIDE.md                  - Complete player's guide
 WEB3_STORAGE_DEPLOYMENT.md     - IPFS deployment guide
+FREE_DNS_GUIDE.md              - Free domain names guide
 DEPLOYMENT_CHECKLIST.md        - Deployment checklist
 DOCS_INDEX.md                  - This file
 ```
