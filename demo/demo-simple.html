@@ -749,22 +749,47 @@
             try {
                 showMessage('resultMessage', '⏳ Submitting to blockchain...', '');
                 
-                // Check if user has MUSD and boost is enabled
-                let musdToUse = '0x0000000000000000000000000000000000000000'; // Zero address if no MUSD
-                if (boostEnabled && musdBalance >= 1) {
-                    musdToUse = MUSD_ADDR;
+                // IMPORTANT: Only use MUSD boost if user actually has 1+ MUSD
+                // The contract will verify this on-chain, so we must be accurate
+                let musdToUse = '0x0000000000000000000000000000000000000000'; // Zero address by default
+                
+                // Re-check MUSD balance right before submitting
+                if (musd && userAddr) {
+                    try {
+                        const balance = await musd.balanceOf(userAddr);
+                        const currentMusdBalance = parseFloat(ethers.utils.formatEther(balance));
+                        
+                        // Only use MUSD address if boost is ON AND balance is sufficient
+                        if (boostEnabled && currentMusdBalance >= 1) {
+                            musdToUse = MUSD_ADDR;
+                            console.log('Using MUSD boost - balance:', currentMusdBalance);
+                        } else {
+                            console.log('Not using MUSD boost - balance:', currentMusdBalance, 'enabled:', boostEnabled);
+                        }
+                    } catch (musdErr) {
+                        console.warn('Could not check MUSD balance, using zero address:', musdErr);
+                    }
                 }
+                
+                console.log('Submitting score:', points, 'MUSD address:', musdToUse);
                 
                 const tx = await quiz.submitScore(points, musdToUse);
                 await tx.wait();
                 showMessage('resultMessage', `✅ Score saved! ${points} points added to your total!`, 'success');
+                
+                // Reset boost after submission
+                if (boostEnabled) {
+                    document.getElementById('boostToggle').checked = false;
+                    boostEnabled = false;
+                    document.getElementById('boostStatus').textContent = 'OFF';
+                }
             } catch (err) {
                 console.error('Submit score error:', err);
                 let errorMsg = err.message || 'Unknown error';
                 
                 // Provide helpful error messages
                 if (errorMsg.includes('execution reverted') || errorMsg.includes('UNPREDICTABLE_GAS_LIMIT')) {
-                    errorMsg = '❌ Transaction failed!\n\nPossible reasons:\n• Make sure you have enough tBTC for gas\n• Check that you\'re on Mezo testnet\n• Try playing the quiz again\n\nGet free tBTC: faucet.mezo.org';
+                    errorMsg = '❌ Transaction failed!\n\nPossible reasons:\n• Make sure you have enough tBTC for gas (get from faucet.mezo.org)\n• Verify you\'re on Mezo testnet\n• If using MUSD boost, make sure you have 1+ MUSD\n• Try turning OFF boost and submitting again';
                 } else if (errorMsg.includes('user rejected')) {
                     errorMsg = '❌ You cancelled the transaction. Click "Save Points" again when ready!';
                 }
