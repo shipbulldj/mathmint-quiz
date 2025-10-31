@@ -308,7 +308,45 @@
             </div>
         </div>
 
-        <!-- Step 3: NFT Minting -->
+        <!-- Wallet Connection (Shown After Playing) -->
+        <div class="card" id="walletCard">
+            <h2>💾 Want to Save Your Points? (Optional)</h2>
+            <p style="font-size: 1.05em; margin-bottom: 15px;">
+                Great job playing! Want to save your points on the blockchain forever?<br>
+                Connect your bank below! 🏦
+            </p>
+            <p id="status">Not Connected</p>
+            <p id="network" class="hidden"></p>
+            <p id="address" class="hidden"></p>
+            <p id="balance" class="hidden"></p>
+            
+            <div id="walletButtons">
+                <div class="tooltip">
+                    <button id="connectBtn" class="primary" onclick="showWelcomeModal()">
+                        🏦 Connect to My Bank
+                    </button>
+                    <span class="tooltiptext">🎉 Already have MetaMask? Connect here!</span>
+                </div>
+                
+                <div class="tooltip">
+                    <button id="createBankBtn" class="success" onclick="showCreateBankGuide()">
+                        ✨ Create My First Bank
+                    </button>
+                    <span class="tooltiptext">🌟 New to Web3? We'll walk you through it!</span>
+                </div>
+                
+                <button id="switchBtn" class="success hidden" onclick="switchNetwork()">Switch to Mezo Testnet</button>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Pro Tip:</strong> Connect once and all your future scores are saved forever!<br>
+                <strong>🎁 Free Coins:</strong> <a href="https://faucet.mezo.org" target="_blank" style="color: #4facfe;">Get tBTC from Mezo Faucet</a><br>
+                <strong>⚡ Bonus:</strong> Hold 1+ MUSD for 1.5x points multiplier!<br>
+                <strong>📚 New?</strong> <a href="../SECURITY_GUIDE.md" target="_blank" style="color: #ffd700; font-weight: bold;">Read our beginner's guide</a>
+            </div>
+        </div>
+
+        <!-- NFT Minting -->
         <div class="card" id="nftCard">
             <h2>🎨 Mint NFT Badge (Requires Wallet)</h2>
             <div class="step">
