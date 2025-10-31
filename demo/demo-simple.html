@@ -736,17 +736,34 @@
         // Blockchain Functions
         async function submitScore() {
             if (!userAddr || !quiz) {
-                showMessage('resultMessage', '🏦 Your Bank Needed!\n\nTo save your score, connect to your bank first.\n\nScroll down and click "Connect to My Bank"', 'warning');
+                showMessage('resultMessage', '🏦 Your Bank Needed!\n\nTo save your score, connect to your bank first.\n\nScroll down and click "Connect to My Own Bank on Mezo"', 'warning');
                 return;
             }
             
             try {
                 showMessage('resultMessage', '⏳ Submitting to blockchain...', '');
-                const tx = await quiz.submitScore(points, MUSD_ADDR);
+                
+                // Check if user has MUSD and boost is enabled
+                let musdToUse = '0x0000000000000000000000000000000000000000'; // Zero address if no MUSD
+                if (boostEnabled && musdBalance >= 1) {
+                    musdToUse = MUSD_ADDR;
+                }
+                
+                const tx = await quiz.submitScore(points, musdToUse);
                 await tx.wait();
                 showMessage('resultMessage', `✅ Score saved! ${points} points added to your total!`, 'success');
             } catch (err) {
-                showMessage('resultMessage', `❌ Failed: ${err.message}`, 'error');
+                console.error('Submit score error:', err);
+                let errorMsg = err.message || 'Unknown error';
+                
+                // Provide helpful error messages
+                if (errorMsg.includes('execution reverted') || errorMsg.includes('UNPREDICTABLE_GAS_LIMIT')) {
+                    errorMsg = '❌ Transaction failed!\n\nPossible reasons:\n• Make sure you have enough tBTC for gas\n• Check that you\'re on Mezo testnet\n• Try playing the quiz again\n\nGet free tBTC: faucet.mezo.org';
+                } else if (errorMsg.includes('user rejected')) {
+                    errorMsg = '❌ You cancelled the transaction. Click "Save Points" again when ready!';
+                }
+                
+                showMessage('resultMessage', errorMsg, 'error');
             }
         }
         
