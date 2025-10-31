@@ -196,47 +196,12 @@
         <h1>🎮 MathMint Quiz</h1>
         <p class="subtitle">Learn Times Tables & Earn NFTs on Mezo L2</p>
         
-        <!-- Step 1: Wallet Connection -->
-        <div class="card" id="walletCard">
-            <h2>🏦 Your Own Bank (Optional - But Cool!)</h2>
-            <p style="font-size: 1.1em; margin-bottom: 15px;">
-                <strong>Play the quiz anytime, no bank needed!</strong> 🎮<br>
-                Want to save your points forever? Connect to your own bank! 
-            </p>
-            <p id="status">Not Connected</p>
-            <p id="network" class="hidden"></p>
-            <p id="address" class="hidden"></p>
-            <p id="balance" class="hidden"></p>
-            
-            <div id="walletButtons">
-                <div class="tooltip">
-                    <button id="connectBtn" class="primary" onclick="showWelcomeModal()">
-                        🏦 Connect to My Bank
-                    </button>
-                    <span class="tooltiptext">🎉 Already have MetaMask? Connect here!</span>
-                </div>
-                
-                <div class="tooltip">
-                    <button id="createBankBtn" class="success" onclick="showCreateBankGuide()">
-                        ✨ Create My First Bank
-                    </button>
-                    <span class="tooltiptext">🌟 New to Web3? We'll walk you through it!</span>
-                </div>
-                
-                <button id="switchBtn" class="success hidden" onclick="switchNetwork()">Switch to Mezo Testnet</button>
-            </div>
-            
-            <div class="info-box">
-                <strong>🎮 Just Want to Play?</strong> Go ahead! Scroll down and start the quiz.<br>
-                <strong>💾 Want to Save Points Forever?</strong> Connect or create your bank above.<br>
-                <strong>🎁 Get Free Test Coins:</strong> <a href="https://faucet.mezo.org" target="_blank" style="color: #4facfe;">Mezo Faucet</a><br>
-                <strong>⚡ Bonus:</strong> Hold 1+ MUSD for 1.5x points multiplier!<br>
-                <strong>📚 New to all this?</strong> <a href="../SECURITY_GUIDE.md" target="_blank" style="color: #ffd700; font-weight: bold;">Let's learn together!</a>
-            </div>
-        </div>
-
-        <!-- Step 2: Play Quiz -->
+        <!-- HERO: Play Quiz - No Wallet Needed! -->
         <div class="card" id="quizCard">
+            <h2>📊 Play Quiz - Jump Right In! 🎮</h2>
+            <p style="font-size: 1.1em; text-align: center; margin: 10px 0;">
+                <strong>No wallet? No problem!</strong> Just play and have fun! 🎉
+            </p>
             <h2>📊 Play Quiz (No Wallet Required!)</h2>
             
             <!-- MUSD Boost Section -->
