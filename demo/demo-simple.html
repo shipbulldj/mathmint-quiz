@@ -752,35 +752,20 @@
             }
             
             try {
-                showMessage('resultMessage', '⏳ Submitting to blockchain...', '');
+                let pts = points;
                 
-                // IMPORTANT: Only use MUSD boost if user actually has 1+ MUSD
-                // The contract will verify this on-chain, so we must be accurate
-                let musdToUse = '0x0000000000000000000000000000000000000000'; // Zero address by default
-                
-                // Re-check MUSD balance right before submitting
-                if (musd && userAddr) {
-                    try {
-                        const balance = await musd.balanceOf(userAddr);
-                        const currentMusdBalance = parseFloat(ethers.utils.formatEther(balance));
-                        
-                        // Only use MUSD address if boost is ON AND balance is sufficient
-                        if (boostEnabled && currentMusdBalance >= 1) {
-                            musdToUse = MUSD_ADDR;
-                            console.log('Using MUSD boost - balance:', currentMusdBalance);
-                        } else {
-                            console.log('Not using MUSD boost - balance:', currentMusdBalance, 'enabled:', boostEnabled);
-                        }
-                    } catch (musdErr) {
-                        console.warn('Could not check MUSD balance, using zero address:', musdErr);
-                    }
+                // Apply boost to points BEFORE submitting (contract doesn't know about MUSD)
+                if (boostEnabled && musdBalance >= 1) {
+                    pts = Math.floor(pts * 1.5);
+                    showMessage('resultMessage', '⚡ MUSD Boost Applied! Submitting ' + pts + ' points...', '');
+                } else {
+                    showMessage('resultMessage', '⏳ Submitting ' + pts + ' points to blockchain...', '');
                 }
                 
-                console.log('Submitting score:', points, 'MUSD address:', musdToUse);
-                
-                const tx = await quiz.submitScore(points, musdToUse);
+                const tx = await quiz.updateScore(userAddr, pts);
+                showMessage('resultMessage', '⏳ Transaction sent! Waiting for confirmation...', '');
                 await tx.wait();
-                showMessage('resultMessage', `✅ Score saved! ${points} points added to your total!`, 'success');
+                showMessage('resultMessage', `✅ Score saved! ${pts} points added to your total!`, 'success');
                 
                 // Reset boost after submission
                 if (boostEnabled) {
@@ -790,13 +775,14 @@
                 }
             } catch (err) {
                 console.error('Submit score error:', err);
-                let errorMsg = err.message || 'Unknown error';
+                let errorMsg = '❌ Transaction failed!\n\n';
                 
-                // Provide helpful error messages
-                if (errorMsg.includes('execution reverted') || errorMsg.includes('UNPREDICTABLE_GAS_LIMIT')) {
-                    errorMsg = '❌ Transaction failed!\n\nPossible reasons:\n• Make sure you have enough tBTC for gas (get from faucet.mezo.org)\n• Verify you\'re on Mezo testnet\n• If using MUSD boost, make sure you have 1+ MUSD\n• Try turning OFF boost and submitting again';
-                } else if (errorMsg.includes('user rejected')) {
-                    errorMsg = '❌ You cancelled the transaction. Click "Save Points" again when ready!';
+                if (err.message && (err.message.includes('execution reverted') || err.message.includes('UNPREDICTABLE_GAS_LIMIT'))) {
+                    errorMsg += 'Possible reasons:\n• Make sure you have enough tBTC for gas (get from faucet.mezo.org)\n• Verify you\'re on Mezo testnet\n• Try refreshing and connecting again';
+                } else if (err.message && err.message.includes('user rejected')) {
+                    errorMsg += 'You cancelled the transaction. Click "Save Points" when ready!';
+                } else {
+                    errorMsg += 'Error: ' + (err.message || 'Unknown error');
                 }
                 
                 showMessage('resultMessage', errorMsg, 'error');
