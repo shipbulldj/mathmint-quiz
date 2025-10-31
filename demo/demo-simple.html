@@ -570,17 +570,27 @@
                 const network = await provider.getNetwork();
                 const chainId = '0x' + network.chainId.toString(16);
                 
+                // Display network name properly (Mezo shows as "unknown")
+                let networkName = network.name;
+                if (chainId === MEZO_TESTNET.chainId) {
+                    networkName = 'Mezo Testnet';
+                } else if (network.name === 'unknown') {
+                    networkName = `Unknown (Chain ID: ${chainId})`;
+                }
+                
                 document.getElementById('status').textContent = '✅ Connected!';
-                document.getElementById('walletInfo').textContent = `Address: ${userAddr.substring(0,6)}...${userAddr.substring(38)}\nNetwork: ${network.name}`;
+                document.getElementById('walletInfo').textContent = `Address: ${userAddr.substring(0,6)}...${userAddr.substring(38)}\nNetwork: ${networkName}`;
                 showElement('walletInfo');
                 
                 if (chainId !== MEZO_TESTNET.chainId) {
                     showElement('switchBtn');
+                    showMessage('resultMessage', '⚠️ Wrong Network!\n\nYou need to switch to Mezo Testnet to use this app.\n\nClick "Switch to Mezo Testnet" button below!', 'warning');
                 } else {
                     quiz = new ethers.Contract(QUIZ_ADDR, QUIZ_ABI, signer);
                     nft = new ethers.Contract(NFT_ADDR, NFT_ABI, signer);
                     musd = new ethers.Contract(MUSD_ADDR, MUSD_ABI, provider);
                     await checkMUSDBalance();
+                    hideElement('switchBtn');
                 }
             } catch (err) {
                 document.getElementById('status').textContent = '❌ Connection failed: ' + err.message;
