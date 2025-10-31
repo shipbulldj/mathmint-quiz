@@ -64,6 +64,20 @@ To submit your score to the blockchain, please connect your MetaMask wallet firs
 ## Current Status
 ✅ **Phase 1 Complete**: Wallet connection is now optional. Users can play quiz without wallet and are prompted clearly when wallet is needed for blockchain operations.
 
+✅ **Documentation Complete**: Comprehensive guides created for deployment and DNS setup.
+
+## Documentation Created
+1. **WEB3_STORAGE_DEPLOYMENT.md** - Complete IPFS deployment guide
+2. **FREE_DNS_GUIDE.md** - Guide for getting free domain names (Fleek, GitHub Pages, ENS, etc.)
+3. **DEPLOYMENT_CHECKLIST.md** - Step-by-step deployment verification
+4. **USER_GUIDE.md** - Complete user manual
+5. **DOCS_INDEX.md** - Central documentation index
+6. **Updated README.md** - Full project overview
+7. **Updated demo/README.md** - Demo-specific guide
+8. **scripts/deploy-to-ipfs.js** - Automated deployment script
+
 ## Next Steps (Pending User Decision)
-- Phase 2: Rebuild as React app with Web3 integration
+- **Deploy to IPFS**: Use Web3.Storage or Fleek.co
+- **Get Free DNS**: Recommended: Fleek.co free subdomain (mathmint-quiz.on.fleek.co)
+- Phase 2: Rebuild as React app with Web3 integration (optional)
 - Phase 3: Optimization (gas, error handling, IPFS deployment)
