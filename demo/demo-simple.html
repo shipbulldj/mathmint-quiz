@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MathMint Quiz - Simple Version</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        /* Header */
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 3em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        .header .strikethrough { text-decoration: line-through; opacity: 0.7; }
+        
+        /* Simplified Card */
+        .panel {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .panel-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .panel-subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        /* Buttons */
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        button.success { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        button.large { padding: 20px 50px; font-size: 1.3em; }
+        
+        /* Quiz Styles */
+        .quiz-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .question {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .option {
+            padding: 25px;
+            font-size: 2em;
+            font-weight: bold;
+            background: rgba(255,255,255,0.25);
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option:hover { background: rgba(255,255,255,0.35); transform: scale(1.05); }
+        .option.correct { background: rgba(16,185,129,0.6); border-color: #10b981; animation: correctPulse 0.5s; }
+        .option.wrong { background: rgba(239,68,68,0.6); border-color: #ef4444; animation: shake 0.5s; }
+        
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .timer {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .timer.warning { color: #fbbf24; animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .progress-bar {
+            height: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+        }
+        .stat { text-align: center; }
+        .stat-value { font-size: 2.5em; font-weight: bold; display: block; }
+        .stat-label { font-size: 1em; opacity: 0.8; margin-top: 5px; }
+        
+        /* Compact Info */
+        .info {
+            background: rgba(59,130,246,0.2);
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        
+        /* Boost Section */
+        .boost {
+            background: linear-gradient(135deg, rgba(255,215,0,0.4), rgba(255,170,0,0.4));
+            border: 3px solid rgba(255,215,0,0.6);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .boost h3 { margin-bottom: 15px; font-size: 1.5em; }
+        
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 80px;
+            height: 40px;
+            margin: 10px;
+        }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.3);
+            transition: 0.4s;
+            border-radius: 40px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 32px; width: 32px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(40px); }
+        
+        /* Collapsible Section */
+        .collapsible {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .collapsible:hover { background: rgba(255,255,255,0.15); }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 15px;
+        }
+        .collapsible-content.active { max-height: 500px; padding: 15px; }
+        
+        .hidden { display: none; }
+        
+        /* Result Messages */
+        .message {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .message.success { background: rgba(16,185,129,0.3); border-left: 5px solid #10b981; }
+        .message.error { background: rgba(239,68,68,0.3); border-left: 5px solid #ef4444; }
+        .message.warning { background: rgba(251,191,36,0.3); border-left: 5px solid #fbbf24; }
+        
+        /* Two Column Layout for Actions */
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .actions button { margin: 0; width: 100%; }
+        
+        @media (max-width: 768px) {
+            .options, .actions { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2em; }
+            .question { font-size: 2.5em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎮 MathMint Quiz</h1>
+            <p>Learn Times Tables, Mint Badges & Start a Bank <span class="strikethrough">Account</span></p>
+        </div>
+        
+        <!-- Main Quiz Panel -->
+        <div class="panel" id="quizPanel">
+            <div class="panel-title">📊 Ready to Play? Let's Go! 🚀</div>
+            <div class="panel-subtitle">No setup needed! Just click and play! 🎉</div>
+            
+            <!-- Boost Section (Hidden until MUSD detected) -->
+            <div id="boostSection" class="boost hidden">
+                <h3>⚡ SECRET POWER-UP UNLOCKED!</h3>
+                <p>You've got MUSD tokens! Want to go BEAST MODE? 🔥</p>
+                <label class="toggle">
+                    <input type="checkbox" id="boostToggle" onchange="toggleBoost()">
+                    <span class="slider"></span>
+                </label>
+                <p id="boostStatus" style="font-weight: bold; margin-top: 10px;">OFF</p>
+                <p style="font-size: 0.9em; margin-top: 10px;">🚀 When ON: 15 points per correct answer!</p>
+            </div>
+            
+            <!-- Quiz Start Screen -->
+            <div id="quizStart" class="quiz-box">
+                <p style="font-size: 1.3em; margin: 20px 0;">Answer 5 times-table questions and rack up points!</p>
+                <div class="info">
+                    ✅ Get 10 points for each right answer<br>
+                    ❌ Lose 1 point for wrong answers<br>
+                    ⏱️ You've got 15 seconds per question
+                </div>
+                <button class="large success" onclick="startQuiz()">Start Quiz!</button>
+            </div>
+            
+            <!-- Quiz Playing Screen -->
+            <div id="quizPlay" class="quiz-box hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+                </div>
+                
+                <div class="timer" id="timer">15</div>
+                
+                <div class="question" id="question">? × ? = ?</div>
+                
+                <div class="options" id="options"></div>
+                
+                <div id="feedback" class="hidden" style="font-size: 1.5em; margin: 20px 0;"></div>
+            </div>
+            
+            <!-- Quiz Results -->
+            <div id="quizResults" class="hidden">
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-value" id="correctCount">0</span>
+                        <span class="stat-label">✅ Correct</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="pointsEarned">0</span>
+                        <span class="stat-label">⭐ Points</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="wrongCount">0</span>
+                        <span class="stat-label">❌ Wrong</span>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="success" onclick="submitScore()">💾 Save Points Forever!</button>
+                    <button onclick="playAgain()">Play Again!</button>
+                </div>
+                
+                <div id="resultMessage" class="message hidden"></div>
+            </div>
+        </div>
+        
+        <!-- Bank Panel (Collapsible) -->
+        <div class="panel">
+            <div class="collapsible" onclick="toggleSection('bankSection')">
+                <strong style="font-size: 1.3em;">💾 Wanna Save Your Score Forever?</strong> (Click to expand)
+            </div>
+            <div id="bankSection" class="collapsible-content">
+                <p style="margin: 15px 0;">Nice playing! Want your points saved forever on the internet? Connect your bank below! (It's free!)</p>
+                
+                <div id="status" style="padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; margin: 10px 0;">
+                    Not Connected
+                </div>
+                <div id="walletInfo" class="hidden" style="font-size: 0.9em; padding: 10px; background: rgba(16,185,129,0.2); border-radius: 8px; margin: 10px 0;"></div>
+                
+                <div class="actions">
+                    <button onclick="showWelcomeModal()">🏦 Connect to My Bank</button>
+                    <button class="success" onclick="showCreateBankGuide()">✨ Create My First Bank</button>
+                </div>
+                
+                <button id="switchBtn" class="hidden" onclick="switchNetwork()" style="width: 100%; margin-top: 10px;">Switch to Mezo Testnet</button>
+                
+                <div class="info" style="margin-top: 15px;">
+                    💡 <strong>Cool Fact:</strong> Connect once, save all your scores forever!<br>
+                    🎁 <strong>Free Practice Money:</strong> <a href="https://faucet.mezo.org" target="_blank" style="color: #4facfe;">Grab some here</a><br>
+                    📚 <strong>First timer?</strong> <a href="../SECURITY_GUIDE.md" target="_blank" style="color: #ffd700; font-weight: bold;">Read our super simple guide</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Badge & Leaderboard Panel (Collapsible) -->
+        <div class="panel">
+            <div class="collapsible" onclick="toggleSection('badgeSection')">
+                <strong style="font-size: 1.3em;">🎨 Mint Badge & View Champions</strong> (Click to expand)
+            </div>
+            <div id="badgeSection" class="collapsible-content">
+                <h3 style="margin: 20px 0;">🎨 Your Badge</h3>
+                <p>Get 50+ points total and you can mint your very own achievement badge!</p>
+                
+                <div class="actions" style="margin: 15px 0;">
+                    <button onclick="getScore()">Check My Total Points</button>
+                    <button class="success" onclick="mintNFT()">Mint My Badge!</button>
+                </div>
+                
+                <div id="badgeMessage" class="message hidden"></div>
+                
+                <hr style="border: 1px solid rgba(255,255,255,0.2); margin: 30px 0;">
+                
+                <h3 style="margin: 20px 0;">🏆 Top Players</h3>
+                <p>Check out who's crushing it!</p>
+                
+                <button class="success" onclick="getLeaderboard()" style="width: 100%; margin: 15px 0;">Show Me The Champions!</button>
+                
+                <div id="leaderboardDisplay" class="hidden" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; margin: 15px 0;"></div>
+            </div>
+        </div>
+        
+        <input type="hidden" id="tokenUri" value="ipfs://QmMathMintBadge/metadata.json">
+        
+    </div>
+    
+    <!-- Welcome Modal (same as demo.html) -->
+    <div id="welcomeModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000;">
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 20px; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="text-align: center; margin-bottom: 20px;">🏦 Welcome to Your Bank of Good Times!</h2>
+            <p style="text-align: center; font-size: 1.2em; margin-bottom: 20px;">🎉 <strong>Congratulations!</strong> You're about to become your own bank!</p>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 15px; margin: 15px 0; border-radius: 10px;">
+                <h3>🔑 5 Quick Security Tips (30 seconds!)</h3>
+                <ul style="line-height: 2;">
+                    <li>Never share your seed phrase</li>
+                    <li>Write it on paper, not phone</li>
+                    <li>This is testnet - safe to learn</li>
+                    <li>You're in control of everything</li>
+                    <li>Start small, test everything</li>
+                </ul>
+            </div>
+            
+            <div style="margin: 20px 0; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px;">
+                <input type="checkbox" id="understandCheck" style="width: 20px; height: 20px; margin-right: 10px;">
+                <label for="understandCheck" style="font-size: 1.1em;">I understand I'm in control and will keep my seed phrase safe!</label>
+            </div>
+            
+            <div style="display: flex; gap: 15px;">
+                <button onclick="closeWelcomeModal()" style="flex: 1; background: rgba(255,255,255,0.2);">Maybe Later</button>
+                <button id="continueBtn" onclick="proceedFromModal()" disabled style="flex: 1;">Let's Go! 🚀</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Bank Modal (simplified) -->
+    <div id="createBankModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000;">
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 20px; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="text-align: center; margin-bottom: 20px;">🌟 Let's Create Your First Bank!</h2>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; margin: 15px 0; border-radius: 10px;">
+                <h3>Step 1: Install MetaMask</h3>
+                <p style="margin: 10px 0;">Go to <a href="https://metamask.io" target="_blank" style="color: #4facfe;">metamask.io</a> and install the extension</p>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; margin: 15px 0; border-radius: 10px;">
+                <h3>Step 2: Write Down Your Seed Phrase</h3>
+                <p style="margin: 10px 0;">📝 Write these 12 words on PAPER (super important!)</p>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; margin: 15px 0; border-radius: 10px;">
+                <h3>Step 3: Come Back Here!</h3>
+                <p style="margin: 10px 0;">Once MetaMask is installed, click "Connect to My Bank"</p>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button onclick="closeCreateBankModal()" style="flex: 1; background: rgba(255,255,255,0.2);">Close</button>
+                <button onclick="openMetaMaskSite()" class="success" style="flex: 1;">Take Me to MetaMask! 🦊</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Contract Configuration
+        const MEZO_TESTNET = {
+            chainId: '0x7b7b',
+            chainName: 'Mezo Testnet',
+            rpcUrls: ['https://rpc.test.mezo.org'],
+            nativeCurrency: { name: 'tBTC', symbol: 'tBTC', decimals: 18 },
+            blockExplorerUrls: ['https://explorer.test.mezo.org']
+        };
+        
+        const QUIZ_ADDR = '0x59bDB59107f29e9712A37c7015ee28675DD7d30f';
+        const NFT_ADDR = '0x03672f6b20622176554a4C0ba7B037d9dCE531f0';
+        const MUSD_ADDR = '0x118917a40FAF1CD7a13dB0Ef56C86De7973Ac503';
+        
+        const QUIZ_ABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"player","type":"address"},{"indexed":false,"internalType":"uint256","name":"score","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"totalScore","type":"uint256"}],"name":"ScoreUpdated","type":"event"},{"inputs":[{"internalType":"address","name":"player","type":"address"}],"name":"canMintNFT","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getLeaderboard","outputs":[{"internalType":"address[]","name":"","type":"address[]"},{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"player","type":"address"}],"name":"getScore","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"scores","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"score","type":"uint256"},{"internalType":"address","name":"musdToken","type":"address"}],"name":"submitScore","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+        
+        const NFT_ABI = [{"inputs":[{"internalType":"address","name":"quizContract","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"player","type":"address"}],"name":"hasMinted","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"tokenURI","type":"string"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"quiz","outputs":[{"internalType":"contract IQuizContract","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+        
+        const MUSD_ABI = [{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}];
+        
+        // State
+        let provider, signer, quiz, nft, musd, userAddr;
+        let quizQuestions = [];
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+        let points = 0;
+        let timerInterval;
+        let timeLeft = 15;
+        let boostEnabled = false;
+        let musdBalance = 0;
+        
+        // UI Helpers
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            section.classList.toggle('active');
+        }
+        
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = `message ${type}`;
+            el.classList.remove('hidden');
+        }
+        
+        function hideElement(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+        
+        function showElement(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        
+        // Modal Functions
+        function showWelcomeModal() {
+            const hasSeenWelcome = localStorage.getItem('mathMintWelcomeSeen');
+            if (!hasSeenWelcome) {
+                const modal = document.getElementById('welcomeModal');
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+                document.getElementById('understandCheck').addEventListener('change', function() {
+                    document.getElementById('continueBtn').disabled = !this.checked;
+                });
+            } else {
+                connect();
+            }
+        }
+        
+        function closeWelcomeModal() {
+            const modal = document.getElementById('welcomeModal');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }
+        
+        function proceedFromModal() {
+            localStorage.setItem('mathMintWelcomeSeen', 'true');
+            closeWelcomeModal();
+            connect();
+        }
+        
+        function showCreateBankGuide() {
+            const modal = document.getElementById('createBankModal');
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+        
+        function closeCreateBankModal() {
+            const modal = document.getElementById('createBankModal');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }
+        
+        function openMetaMaskSite() {
+            window.open('https://metamask.io', '_blank');
+        }
+        
+        // Wallet Connection
+        async function connect() {
+            try {
+                if (!window.ethereum) {
+                    alert('Please install MetaMask!');
+                    return;
+                }
+                
+                document.getElementById('status').textContent = '⏳ Connecting...';
+                
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddr = await signer.getAddress();
+                
+                const network = await provider.getNetwork();
+                const chainId = '0x' + network.chainId.toString(16);
+                
+                document.getElementById('status').textContent = '✅ Connected!';
+                document.getElementById('walletInfo').textContent = `Address: ${userAddr.substring(0,6)}...${userAddr.substring(38)}\nNetwork: ${network.name}`;
+                showElement('walletInfo');
+                
+                if (chainId !== MEZO_TESTNET.chainId) {
+                    showElement('switchBtn');
+                } else {
+                    quiz = new ethers.Contract(QUIZ_ADDR, QUIZ_ABI, signer);
+                    nft = new ethers.Contract(NFT_ADDR, NFT_ABI, signer);
+                    musd = new ethers.Contract(MUSD_ADDR, MUSD_ABI, provider);
+                    await checkMUSDBalance();
+                }
+            } catch (err) {
+                document.getElementById('status').textContent = '❌ Connection failed: ' + err.message;
+            }
+        }
+        
+        async function switchNetwork() {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [MEZO_TESTNET]
+                });
+                location.reload();
+            } catch (err) {
+                alert('Failed to switch network: ' + err.message);
+            }
+        }
+        
+        async function checkMUSDBalance() {
+            try {
+                const balance = await musd.balanceOf(userAddr);
+                musdBalance = parseFloat(ethers.utils.formatEther(balance));
+                if (musdBalance >= 1) {
+                    showElement('boostSection');
+                }
+            } catch (err) {
+                console.error('MUSD check failed:', err);
+            }
+        }
+        
+        function toggleBoost() {
+            boostEnabled = document.getElementById('boostToggle').checked;
+            document.getElementById('boostStatus').textContent = boostEnabled ? '✅ ON' : 'OFF';
+        }
+        
+        // Quiz Logic
+        function generateQuestions() {
+            quizQuestions = [];
+            for (let i = 0; i < 5; i++) {
+                const a = Math.floor(Math.random() * 10) + 1;
+                const b = Math.floor(Math.random() * 10) + 1;
+                const correct = a * b;
+                const options = [correct];
+                while (options.length < 4) {
+                    const wrong = Math.floor(Math.random() * 100) + 1;
+                    if (!options.includes(wrong)) options.push(wrong);
+                }
+                options.sort(() => Math.random() - 0.5);
+                quizQuestions.push({ a, b, correct, options });
+            }
+        }
+        
+        function startQuiz() {
+            generateQuestions();
+            currentQuestion = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            points = 0;
+            
+            hideElement('quizStart');
+            hideElement('quizResults');
+            showElement('quizPlay');
+            
+            showQuestion();
+        }
+        
+        function showQuestion() {
+            const q = quizQuestions[currentQuestion];
+            document.getElementById('question').textContent = `${q.a} × ${q.b} = ?`;
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'option';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt);
+                optionsDiv.appendChild(btn);
+            });
+            
+            const progress = ((currentQuestion + 1) / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            startTimer();
+        }
+        
+        function startTimer() {
+            timeLeft = 15;
+            document.getElementById('timer').textContent = timeLeft;
+            document.getElementById('timer').classList.remove('warning');
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 5) {
+                    document.getElementById('timer').classList.add('warning');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    checkAnswer(null);
+                }
+            }, 1000);
+        }
+        
+        function checkAnswer(answer) {
+            clearInterval(timerInterval);
+            
+            const q = quizQuestions[currentQuestion];
+            const correct = answer === q.correct;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => {
+                opt.onclick = null;
+                if (parseInt(opt.textContent) === q.correct) {
+                    opt.classList.add('correct');
+                } else if (opt.textContent === String(answer)) {
+                    opt.classList.add('wrong');
+                }
+            });
+            
+            if (correct) {
+                correctAnswers++;
+                const earnedPoints = boostEnabled ? 15 : 10;
+                points += earnedPoints;
+                document.getElementById('feedback').textContent = `✅ Correct! +${earnedPoints} points`;
+            } else {
+                wrongAnswers++;
+                points = Math.max(0, points - 1);
+                document.getElementById('feedback').textContent = `❌ Wrong! The answer was ${q.correct}. -1 point`;
+            }
+            
+            showElement('feedback');
+            
+            setTimeout(() => {
+                currentQuestion++;
+                hideElement('feedback');
+                
+                if (currentQuestion < 5) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 2000);
+        }
+        
+        function showResults() {
+            hideElement('quizPlay');
+            showElement('quizResults');
+            
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('pointsEarned').textContent = points;
+            document.getElementById('wrongCount').textContent = wrongAnswers;
+        }
+        
+        function playAgain() {
+            hideElement('quizResults');
+            hideElement('resultMessage');
+            showElement('quizStart');
+        }
+        
+        // Blockchain Functions
+        async function submitScore() {
+            if (!userAddr || !quiz) {
+                showMessage('resultMessage', '🏦 Your Bank Needed!\n\nTo save your score, connect to your bank first.\n\nScroll down and click "Connect to My Bank"', 'warning');
+                return;
+            }
+            
+            try {
+                showMessage('resultMessage', '⏳ Submitting to blockchain...', '');
+                const tx = await quiz.submitScore(points, MUSD_ADDR);
+                await tx.wait();
+                showMessage('resultMessage', `✅ Score saved! ${points} points added to your total!`, 'success');
+            } catch (err) {
+                showMessage('resultMessage', `❌ Failed: ${err.message}`, 'error');
+            }
+        }
+        
+        async function getScore() {
+            if (!userAddr || !quiz) {
+                showMessage('badgeMessage', '🏦 Connect your bank first!', 'warning');
+                return;
+            }
+            
+            try {
+                const score = await quiz.getScore(userAddr);
+                showMessage('badgeMessage', `Your Total Score: ${score} points`, 'success');
+            } catch (err) {
+                showMessage('badgeMessage', `❌ Failed: ${err.message}`, 'error');
+            }
+        }
+        
+        async function mintNFT() {
+            if (!userAddr || !nft) {
+                showMessage('badgeMessage', '🏦 Connect your bank first!', 'warning');
+                return;
+            }
+            
+            try {
+                const uri = document.getElementById('tokenUri').value;
+                showMessage('badgeMessage', '⏳ Minting your badge...', '');
+                const tx = await nft.mint(uri);
+                await tx.wait();
+                showMessage('badgeMessage', '🎉 Badge minted! Check MetaMask NFTs tab!', 'success');
+            } catch (err) {
+                showMessage('badgeMessage', `❌ Failed: ${err.message}`, 'error');
+            }
+        }
+        
+        async function getLeaderboard() {
+            try {
+                const readProvider = new ethers.providers.JsonRpcProvider(MEZO_TESTNET.rpcUrls[0]);
+                const readQuiz = new ethers.Contract(QUIZ_ADDR, QUIZ_ABI, readProvider);
+                
+                const result = await readQuiz.getLeaderboard();
+                const addrs = result[0];
+                const scores = result[1];
+                
+                if (addrs.length === 0) {
+                    document.getElementById('leaderboardDisplay').innerHTML = '<p style="text-align: center;">No players yet! Be the first! 🚀</p>';
+                } else {
+                    let html = '<div style="font-size: 1.1em;">';
+                    for (let i = 0; i < addrs.length; i++) {
+                        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
+                        const short = addrs[i].substring(0, 6) + '...' + addrs[i].substring(38);
+                        const isYou = userAddr && addrs[i].toLowerCase() === userAddr.toLowerCase();
+                        html += `<div style="padding: 12px; margin: 8px 0; background: rgba(255,255,255,${isYou ? 0.3 : 0.1}); border-radius: 8px; display: flex; justify-content: space-between;">`;
+                        html += `<span>${medal} ${short} ${isYou ? '(YOU!)' : ''}</span>`;
+                        html += `<span style="font-weight: bold;">${scores[i]} pts</span>`;
+                        html += `</div>`;
+                    }
+                    html += '</div>';
+                    document.getElementById('leaderboardDisplay').innerHTML = html;
+                }
+                
+                showElement('leaderboardDisplay');
+            } catch (err) {
+                document.getElementById('leaderboardDisplay').innerHTML = `<p style="color: #ef4444;">Failed to load: ${err.message}</p>`;
+                showElement('leaderboardDisplay');
+            }
+        }
+    </script>
+</body>
+</html>
