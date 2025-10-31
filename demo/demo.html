@@ -946,9 +946,11 @@
             if (!userAddr || !quiz) {
                 return {
                     connected: false,
-                    message: '⚠️ Wallet Required\n\n' + 
-                             'To ' + actionName + ', please connect your MetaMask wallet first.\n\n' +
-                             '👆 Scroll up to the "Wallet Connection" section and click "Connect MetaMask"'
+                    message: '🏦 Your Bank Needed!\n\n' + 
+                             'To ' + actionName + ', connect to your bank first.\n\n' +
+                             '👆 Scroll up and click "Connect to My Bank"\n' +
+                             '   (or "Create My First Bank" if you\'re new!)\n\n' +
+                             'Need help? We\'re here for you! 💙'
                 };
             }
             return { connected: true };
