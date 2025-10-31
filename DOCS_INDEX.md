@@ -19,6 +19,12 @@ Welcome to MathMint Quiz! This index will help you find the right documentation 
   - CLI and script methods
   - Gateway URLs and access
   
+- **[FREE_DNS_GUIDE.md](./FREE_DNS_GUIDE.md)** - Get free domain names
+  - Fleek.co free subdomains
+  - GitHub Pages setup
+  - ENS .eth domains
+  - Custom domain options
+  
 - **[DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)** - Complete deployment checklist
   - Pre-deployment verification
   - Testing protocol
