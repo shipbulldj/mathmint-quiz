@@ -253,7 +253,12 @@
                     Connect your wallet above to save your score on the blockchain!
                 </div>
                 
-                <button class="success large" onclick="submitScore()" id="submitScoreBtn">Submit Score to Blockchain</button>
+                <div class="tooltip">
+                    <button class="success large" onclick="submitScore()" id="submitScoreBtn">Submit Score to Blockchain 
+                        <span class="info-icon">i</span>
+                    </button>
+                    <span class="tooltiptext">💪 YOU control this! Each transaction needs YOUR approval. You'll pay a tiny fee - you're running your own bank!</span>
+                </div>
                 <button class="primary" onclick="playAgain()" style="margin-left: 10px;">Play Again</button>
                 
                 <div id="quizResult" class="result hidden"></div>
