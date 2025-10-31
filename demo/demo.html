@@ -135,26 +135,40 @@
         
         <!-- Step 1: Wallet Connection -->
         <div class="card" id="walletCard">
-            <h2>🔐 Wallet Connection (Optional)</h2>
-            <p>Connect wallet to submit scores, mint NFTs, and view leaderboard</p>
+            <h2>🏦 Your Own Bank (Optional - But Cool!)</h2>
+            <p style="font-size: 1.1em; margin-bottom: 15px;">
+                <strong>Play the quiz anytime, no bank needed!</strong> 🎮<br>
+                Want to save your points forever? Connect to your own bank! 
+            </p>
             <p id="status">Not Connected</p>
             <p id="network" class="hidden"></p>
             <p id="address" class="hidden"></p>
             <p id="balance" class="hidden"></p>
             
-            <div class="tooltip">
-                <button id="connectBtn" class="primary" onclick="showWelcomeModal()">Connect MetaMask 🏦</button>
-                <span class="tooltiptext">🎉 First time? We'll show you some quick tips to stay safe!</span>
+            <div id="walletButtons">
+                <div class="tooltip">
+                    <button id="connectBtn" class="primary" onclick="showWelcomeModal()">
+                        🏦 Connect to My Bank
+                    </button>
+                    <span class="tooltiptext">🎉 Already have MetaMask? Connect here!</span>
+                </div>
+                
+                <div class="tooltip">
+                    <button id="createBankBtn" class="success" onclick="showCreateBankGuide()">
+                        ✨ Create My First Bank
+                    </button>
+                    <span class="tooltiptext">🌟 New to Web3? We'll walk you through it!</span>
+                </div>
+                
+                <button id="switchBtn" class="success hidden" onclick="switchNetwork()">Switch to Mezo Testnet</button>
             </div>
             
-            <button id="switchBtn" class="success hidden" onclick="switchNetwork()">Switch to Mezo Testnet</button>
-            
             <div class="info-box">
-                <strong>ℹ️ Play Without Wallet:</strong> You can play the quiz anytime! Connect only when you want to save scores on blockchain.<br>
-                <strong>ℹ️ Need MetaMask?</strong> Install from <a href="https://metamask.io" target="_blank" style="color: #4facfe;">metamask.io</a><br>
-                <strong>ℹ️ Need tBTC?</strong> Get from <a href="https://faucet.mezo.org" target="_blank" style="color: #4facfe;">Mezo Faucet</a><br>
-                <strong>⚡ MUSD Boost?</strong> Hold 1+ MUSD to unlock 1.5x point multiplier!<br>
-                <strong>🏦 New to Web3?</strong> We'll show you security tips when you connect - <a href="../SECURITY_GUIDE.md" target="_blank" style="color: #ffd700; font-weight: bold;">or read our Security Guide</a>
+                <strong>🎮 Just Want to Play?</strong> Go ahead! Scroll down and start the quiz.<br>
+                <strong>💾 Want to Save Points Forever?</strong> Connect or create your bank above.<br>
+                <strong>🎁 Get Free Test Coins:</strong> <a href="https://faucet.mezo.org" target="_blank" style="color: #4facfe;">Mezo Faucet</a><br>
+                <strong>⚡ Bonus:</strong> Hold 1+ MUSD for 1.5x points multiplier!<br>
+                <strong>📚 New to all this?</strong> <a href="../SECURITY_GUIDE.md" target="_blank" style="color: #ffd700; font-weight: bold;">Let's learn together!</a>
             </div>
         </div>
 
