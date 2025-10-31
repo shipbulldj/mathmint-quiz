@@ -349,31 +349,31 @@
 
         <!-- NFT Minting -->
         <div class="card" id="nftCard">
-            <h2>🎨 Mint NFT Badge (Requires Wallet)</h2>
+            <h2>🎨 Mint Your Badge</h2>
             <div class="step">
                 <span class="step-number">3</span>
-                Connect wallet and earn 50+ points total to mint your achievement NFT!
+                Get 50+ points total and you can mint your very own achievement badge!
             </div>
-            <button id="scoreBtn" class="primary" onclick="getScore()">Check My Total Score</button>
-            <button id="eligibleBtn" class="primary" onclick="checkEligible()">Check NFT Eligibility</button>
+            <button id="scoreBtn" class="primary" onclick="getScore()">Check My Total Points</button>
+            <button id="eligibleBtn" class="primary" onclick="checkEligible()">Can I Mint a Badge?</button>
             <div id="scoreResult" class="result hidden"></div>
             
             <div style="margin-top: 20px;">
                 <input type="text" id="tokenUri" value="ipfs://QmMathMintBadge/metadata.json" placeholder="Token URI">
                 
                 <div class="tooltip">
-                    <button id="mintBtn" class="success" onclick="mintNFT()">Mint NFT Badge 
+                    <button id="mintBtn" class="success" onclick="mintNFT()">Mint My Badge! 
                         <span class="info-icon">i</span>
                     </button>
-                    <span class="tooltiptext">🎨 This NFT is truly YOURS! Once minted, no one can take it away. You OWN it forever.</span>
+                    <span class="tooltiptext">🎨 This badge is truly YOURS! Once you mint it, no one can take it away. You OWN it forever.</span>
                 </div>
                 
-                <button id="statusBtn" class="primary" onclick="checkMintStatus()">Check Mint Status</button>
+                <button id="statusBtn" class="primary" onclick="checkMintStatus()">Check Badge Status</button>
             </div>
             <div id="nftResult" class="result hidden"></div>
             
             <div class="info-box">
-                <strong>ℹ️ NFT Info:</strong> Your badge will appear in MetaMask under NFTs tab. Need 50+ points total and 0.001+ tBTC for gas.
+                <strong>ℹ️ Badge Info:</strong> Your badge shows up in MetaMask! You need 50+ points and a tiny bit of test money for gas.
             </div>
         </div>
 
