@@ -775,7 +775,13 @@
                 
                 document.getElementById('submitScoreBtn').disabled = true;
                 
-                const tx = await quiz.updateScore(userAddr, pts);
+                // Determine MUSD address to use
+                let musdToUse = '0x0000000000000000000000000000000000000000'; // Zero address if no MUSD boost
+                if (boostEnabled && musdBalance >= 1) {
+                    musdToUse = MUSD_ADDR;
+                }
+                
+                const tx = await quiz.submitScore(pts, musdToUse);
                 show('quizResult', '⏳ Transaction sent! Hash: ' + tx.hash + '\n\nWaiting for confirmation...');
                 await tx.wait();
                 
@@ -794,7 +800,18 @@
                     document.getElementById('boostActiveMsg').classList.add('hidden');
                 }
             } catch (err) {
-                show('quizResult', '❌ Error: ' + err.message, 'error');
+                console.error('Submit score error:', err);
+                let errorMsg = '❌ Transaction Failed!\n\n';
+                
+                if (err.message && (err.message.includes('execution reverted') || err.message.includes('UNPREDICTABLE_GAS_LIMIT'))) {
+                    errorMsg += 'Possible reasons:\n• Make sure you have enough tBTC for gas\n• Verify you\'re on Mezo testnet\n• Try refreshing and connecting again\n\nGet free tBTC: faucet.mezo.org';
+                } else if (err.message && err.message.includes('user rejected')) {
+                    errorMsg += 'You cancelled the transaction. Click "Save Points" when ready!';
+                } else {
+                    errorMsg += 'Error: ' + (err.message || 'Unknown error');
+                }
+                
+                show('quizResult', errorMsg, 'error');
                 document.getElementById('submitScoreBtn').disabled = false;
             }
         }
