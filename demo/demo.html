@@ -357,6 +357,37 @@
         let timerInterval;
         let timeLeft = 15;
 
+        // Welcome Modal Functions
+        function showWelcomeModal() {
+            // Check if user has already seen the modal
+            const hasSeenWelcome = localStorage.getItem('mathMintWelcomeSeen');
+            
+            if (!hasSeenWelcome) {
+                document.getElementById('welcomeModal').classList.remove('hidden');
+                
+                // Enable continue button when checkbox is checked
+                document.getElementById('understandCheck').addEventListener('change', function() {
+                    document.getElementById('continueBtn').disabled = !this.checked;
+                });
+            } else {
+                // If already seen, connect directly
+                connect();
+            }
+        }
+
+        function closeWelcomeModal() {
+            document.getElementById('welcomeModal').classList.add('hidden');
+            // Don't mark as seen if they close without understanding
+        }
+
+        function proceedFromModal() {
+            // Mark as seen so they don't see it again
+            localStorage.setItem('mathMintWelcomeSeen', 'true');
+            document.getElementById('welcomeModal').classList.add('hidden');
+            // Proceed with wallet connection
+            connect();
+        }
+
         async function connect() {
             try {
                 if (!window.ethereum) {
