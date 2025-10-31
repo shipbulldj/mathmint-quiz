@@ -141,7 +141,12 @@
             <p id="network" class="hidden"></p>
             <p id="address" class="hidden"></p>
             <p id="balance" class="hidden"></p>
-            <button id="connectBtn" class="primary" onclick="connect()">Connect MetaMask</button>
+            
+            <div class="tooltip">
+                <button id="connectBtn" class="primary" onclick="showWelcomeModal()">Connect MetaMask 🏦</button>
+                <span class="tooltiptext">🎉 First time? We'll show you some quick tips to stay safe!</span>
+            </div>
+            
             <button id="switchBtn" class="success hidden" onclick="switchNetwork()">Switch to Mezo Testnet</button>
             
             <div class="info-box">
