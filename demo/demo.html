@@ -206,17 +206,21 @@
             <h2>📊 Play Quiz (No Wallet Required!)</h2>
             
             <!-- MUSD Boost Section -->
-            <div id="musdBoostSection" class="hidden" style="background: rgba(255,215,0,0.1); border: 2px solid rgba(255,215,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+            <div id="musdBoostSection" class="hidden" style="background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,170,0,0.3)); padding: 20px; border-radius: 15px; margin-bottom: 15px; border: 2px solid rgba(255,215,0,0.5);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <strong style="font-size: 1.1em;">⚡ MUSD Boost Available!</strong><br>
-                        <span style="font-size: 0.9em; opacity: 0.9;">1.5x points multiplier (10 → 15 per correct answer)</span><br>
-                        <span id="musdBalanceDisplay" style="font-size: 0.85em; color: #ffd700;"></span>
+                        <strong style="font-size: 1.2em;">⚡ SECRET POWER-UP UNLOCKED!</strong><br>
+                        <span style="font-size: 1.0em; opacity: 0.95;">You've got MUSD tokens! Want to go BEAST MODE? 🔥</span><br>
+                        <span id="musdBalanceDisplay" style="font-size: 0.9em; color: #ffd700; font-weight: bold;"></span>
                     </div>
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="boostToggle" onchange="toggleBoost()" style="width: 20px; height: 20px; margin-right: 10px; cursor: pointer;">
-                        <span style="font-size: 1.1em; font-weight: bold;">Enable Boost</span>
+                        <span style="font-size: 1.1em; font-weight: bold;">Turn this ON before you play</span>
                     </label>
+                </div>
+                <div style="margin-top: 15px; font-size: 0.95em;">
+                    🚀 <strong>When ON:</strong> 10 points becomes 15 points per right answer!<br>
+                    💪 That's 1.5x the power! Go get 'em!
                 </div>
                 <div id="boostActiveMsg" class="hidden" style="background: rgba(16,185,129,0.2); padding: 10px; margin-top: 10px; border-radius: 5px; border-left: 4px solid #10b981;">
                     ✅ <strong>Boost Active!</strong> Earning 1.5x points this session
