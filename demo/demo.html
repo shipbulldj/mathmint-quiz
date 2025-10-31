@@ -278,7 +278,14 @@
             
             <div style="margin-top: 20px;">
                 <input type="text" id="tokenUri" value="ipfs://QmMathMintBadge/metadata.json" placeholder="Token URI">
-                <button id="mintBtn" class="success" onclick="mintNFT()">Mint NFT Badge</button>
+                
+                <div class="tooltip">
+                    <button id="mintBtn" class="success" onclick="mintNFT()">Mint NFT Badge 
+                        <span class="info-icon">i</span>
+                    </button>
+                    <span class="tooltiptext">🎨 This NFT is truly YOURS! Once minted, no one can take it away. You OWN it forever.</span>
+                </div>
+                
                 <button id="statusBtn" class="primary" onclick="checkMintStatus()">Check Mint Status</button>
             </div>
             <div id="nftResult" class="result hidden"></div>
