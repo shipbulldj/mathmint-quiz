@@ -465,6 +465,20 @@
             // Proceed with wallet connection
             connect();
         }
+        
+        // Create Bank Guide Modal Functions
+        function showCreateBankGuide() {
+            document.getElementById('createBankModal').classList.remove('hidden');
+        }
+        
+        function closeCreateBankModal() {
+            document.getElementById('createBankModal').classList.add('hidden');
+        }
+        
+        function openMetaMaskSite() {
+            window.open('https://metamask.io', '_blank');
+            // Keep modal open so they can reference the steps
+        }
 
         async function connect() {
             try {
