@@ -62,7 +62,11 @@ Welcome to MathMint Quiz! This index will help you find the right documentation 
 
 ### "I want to deploy the demo to IPFS"
 → [WEB3_STORAGE_DEPLOYMENT.md](./WEB3_STORAGE_DEPLOYMENT.md)  
+→ [FREE_DNS_GUIDE.md](./FREE_DNS_GUIDE.md)  
 → [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)
+
+### "I want a free custom domain name"
+→ [FREE_DNS_GUIDE.md](./FREE_DNS_GUIDE.md)
 
 ### "I want to develop/modify the contracts"
 → [README.md](./README.md)  
