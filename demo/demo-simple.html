@@ -789,7 +789,7 @@
                 let errorMsg = '❌ Transaction failed!\n\n';
                 
                 if (err.message && (err.message.includes('execution reverted') || err.message.includes('UNPREDICTABLE_GAS_LIMIT'))) {
-                    errorMsg += 'Possible reasons:\n• Make sure you have enough tBTC for gas (get from faucet.mezo.org)\n• Verify you\'re on Mezo testnet\n• Try refreshing and connecting again';
+                    errorMsg += 'Possible reasons:\n• Make sure you have enough tBTC for gas (get from faucet.test.mezo.org)\n• Verify you\'re on Mezo testnet\n• Try refreshing and connecting again';
                 } else if (err.message && err.message.includes('user rejected')) {
                     errorMsg += 'You cancelled the transaction. Click "Save Points" when ready!';
                 } else {
