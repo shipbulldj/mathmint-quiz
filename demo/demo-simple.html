@@ -630,9 +630,15 @@
                 musdBalance = parseFloat(ethers.utils.formatEther(balance));
                 if (musdBalance >= 1) {
                     showElement('boostSection');
+                    hideElement('getMUSDPrompt');
+                } else {
+                    hideElement('boostSection');
+                    showElement('getMUSDPrompt');
                 }
             } catch (err) {
                 console.error('MUSD check failed:', err);
+                // Show get MUSD prompt on error too
+                showElement('getMUSDPrompt');
             }
         }
         
