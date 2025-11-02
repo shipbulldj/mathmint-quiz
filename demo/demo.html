@@ -570,10 +570,16 @@
                 
                 if (musdBalance >= 1) {
                     document.getElementById('musdBoostSection').classList.remove('hidden');
+                    document.getElementById('getMUSDPrompt').classList.add('hidden');
                     document.getElementById('musdBalanceDisplay').textContent = '💰 Your MUSD Balance: ' + musdBalance.toFixed(2) + ' MUSD';
+                } else {
+                    document.getElementById('musdBoostSection').classList.add('hidden');
+                    document.getElementById('getMUSDPrompt').classList.remove('hidden');
                 }
             } catch (err) {
                 console.log('MUSD balance check failed:', err.message);
+                // Show get MUSD prompt on error
+                document.getElementById('getMUSDPrompt').classList.remove('hidden');
             }
         }
 
