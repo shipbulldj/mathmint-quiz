@@ -232,13 +232,15 @@
             border-radius: 10px;
             font-size: 1.1em;
             line-height: 1.6;
+        }
+        .message.scrollable {
             max-height: 400px;
             overflow-y: auto;
         }
-        .message::-webkit-scrollbar { width: 8px; }
-        .message::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
-        .message::-webkit-scrollbar-thumb { background: rgba(74,172,254,0.5); border-radius: 4px; }
-        .message::-webkit-scrollbar-thumb:hover { background: rgba(74,172,254,0.7); }
+        .message.scrollable::-webkit-scrollbar { width: 8px; }
+        .message.scrollable::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .message.scrollable::-webkit-scrollbar-thumb { background: rgba(74,172,254,0.5); border-radius: 4px; }
+        .message.scrollable::-webkit-scrollbar-thumb:hover { background: rgba(74,172,254,0.7); }
         .message.success { background: rgba(16,185,129,0.3); border-left: 5px solid #10b981; }
         .message.error { background: rgba(239,68,68,0.3); border-left: 5px solid #ef4444; }
         .message.warning { background: rgba(251,191,36,0.3); border-left: 5px solid #fbbf24; }
