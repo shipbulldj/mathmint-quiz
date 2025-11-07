@@ -1125,19 +1125,25 @@
         
         // MUSD Boost
         function toggleBoost() {
-            boostEnabled = document.getElementById('boostToggle').checked;
+            const toggleElement = document.getElementById('boostToggle');
+            if (!toggleElement) return;
+            
+            boostEnabled = toggleElement.checked;
             if (boostEnabled && musdBalance < 1) {
-                document.getElementById('boostToggle').checked = false;
+                toggleElement.checked = false;
                 boostEnabled = false;
                 alert('You need 1+ MUSD to enable boost!');
                 return;
             }
             
             // Show/hide boost active message
-            if (boostEnabled) {
-                document.getElementById('boostActiveMsg').classList.remove('hidden');
-            } else {
-                document.getElementById('boostActiveMsg').classList.add('hidden');
+            const boostActiveMsg = document.getElementById('boostActiveMsg');
+            if (boostActiveMsg) {
+                if (boostEnabled) {
+                    boostActiveMsg.classList.remove('hidden');
+                } else {
+                    boostActiveMsg.classList.add('hidden');
+                }
             }
         }
         
