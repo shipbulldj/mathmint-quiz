@@ -1,0 +1,29 @@
+{
+  "name": "Baby Dragon - Level 1",
+  "description": "Your first magical friend! This adorable Baby Dragon badge shows you've mastered the basics of multiplication and earned your first 50 points in MathMint Quiz.",
+  "image": "ipfs://QmBabyDragon/image.png",
+  "attributes": [
+    {
+      "trait_type": "Badge Level",
+      "value": "1"
+    },
+    {
+      "trait_type": "Character",
+      "value": "Baby Dragon"
+    },
+    {
+      "trait_type": "Points Required",
+      "value": "50"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Emoji",
+      "value": "🐲"
+    }
+  ],
+  "external_url": "https://mathmint.quiz",
+  "background_color": "f093fb"
+}
