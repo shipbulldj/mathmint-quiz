@@ -779,6 +779,14 @@
                 document.getElementById('boostToggle').checked = false;
                 boostEnabled = false;
                 alert('You need 1+ MUSD to enable boost!');
+                return;
+            }
+            
+            // Show/hide boost active message
+            if (boostEnabled) {
+                document.getElementById('boostActiveMsg').classList.remove('hidden');
+            } else {
+                document.getElementById('boostActiveMsg').classList.add('hidden');
             }
         }
         
