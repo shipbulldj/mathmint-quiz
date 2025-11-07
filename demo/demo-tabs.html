@@ -1377,11 +1377,9 @@
                         </div>
                     `;
                 }
-            } catch (err) {
-                console.error('Badge check error:', err);
-                content.innerHTML = `<div class="message error">Error checking badge status: ${err.message}</div>`;
-            }
+            } // End old code block
         }
+        */
         
         async function mintBadgeWithDeduction(pointCost) {
             const msg = document.getElementById('nftContent');
