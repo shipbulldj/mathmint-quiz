@@ -378,20 +378,20 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <h4>💰 tBTC Balance</h4>
-                            <div class="info-value" id="tbtcBalance">-</div>
+                            <div class="info-value" id="tbtcBalance">Loading...</div>
                             <div class="info-sub">Testnet Bitcoin</div>
                         </div>
                         <div class="info-item">
                             <h4>⚡ MUSD Balance</h4>
-                            <div class="info-value" id="musdBalance">-</div>
+                            <div class="info-value" id="musdBalance">Loading...</div>
                             <div class="info-sub">
-                                <span id="musdStatus">Loading...</span><br>
-                                <a href="https://testnet.mezo.org/" target="_blank" style="color: #ffd700; font-weight: bold;">Swap for MUSD</a>
+                                <span id="musdStatus">Checking...</span><br>
+                                <a href="https://testnet.mezo.org/" target="_blank" style="color: #ffd700; font-weight: bold; text-decoration: underline;">Swap for MUSD</a>
                             </div>
                         </div>
                         <div class="info-item">
                             <h4>🎯 Quiz Points (Saved)</h4>
-                            <div class="info-value" id="savedPoints">-</div>
+                            <div class="info-value" id="savedPoints">Loading...</div>
                             <div class="info-sub">On blockchain</div>
                         </div>
                         <div class="info-item" id="pendingPointsItem" class="hidden">
@@ -399,6 +399,10 @@
                             <div class="info-value" id="pendingPoints">0</div>
                             <div class="info-sub">Not yet saved</div>
                         </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="refreshBankData()" style="background: rgba(74,172,254,0.3); padding: 10px 20px; font-size: 0.95em;">🔄 Refresh Data</button>
                     </div>
                 </div>
                 
