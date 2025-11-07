@@ -1,0 +1,29 @@
+{
+  "name": "Sparkle Unicorn - Level 2",
+  "description": "Rare and sparkly! This magical Sparkle Unicorn badge proves you've doubled your dedication and reached 100 points in MathMint Quiz.",
+  "image": "ipfs://QmSparkleUnicorn/image.png",
+  "attributes": [
+    {
+      "trait_type": "Badge Level",
+      "value": "2"
+    },
+    {
+      "trait_type": "Character",
+      "value": "Sparkle Unicorn"
+    },
+    {
+      "trait_type": "Points Required",
+      "value": "100"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    },
+    {
+      "trait_type": "Emoji",
+      "value": "🦄✨"
+    }
+  ],
+  "external_url": "https://mathmint.quiz",
+  "background_color": "f5576c"
+}
