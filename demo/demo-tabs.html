@@ -814,6 +814,38 @@
             }
         }
         
+        // Quiz Mode Selection
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            if (mode === 'classic') {
+                totalQuestions = 5;
+                questionTimeLimit = 15;
+                practiceTable = null;
+                startQuiz();
+            } else if (mode === 'practice') {
+                totalQuestions = 10;
+                questionTimeLimit = 15;
+                document.getElementById('modeSelection').classList.add('hidden');
+                document.getElementById('tableSelection').classList.remove('hidden');
+            } else if (mode === 'rapid') {
+                totalQuestions = 20;
+                questionTimeLimit = 10;
+                practiceTable = null;
+                startQuiz();
+            }
+        }
+        
+        function startPractice(table) {
+            practiceTable = table;
+            startQuiz();
+        }
+        
+        function backToModes() {
+            document.getElementById('tableSelection').classList.add('hidden');
+            document.getElementById('modeSelection').classList.remove('hidden');
+        }
+        
         // Initialize
         window.addEventListener('load', () => {
             // Show the "Get MUSD" hint by default
