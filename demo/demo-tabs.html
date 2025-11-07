@@ -1283,17 +1283,103 @@
             }
         }
         
-        async function mintBadge() {
-            const content = document.getElementById('nftContent');
+        async function mintBadgeWithDeduction(pointCost) {
+            const msg = document.getElementById('nftContent');
             try {
-                content.innerHTML = '<div class="loading"><div class="spinner"></div><p>Minting your badge...</p></div>';
-                const tx = await nft.mint('ipfs://QmMathMintBadge/metadata.json');
-                await tx.wait();
-                content.innerHTML = '<div class="message success"><strong>🎉 Badge Minted!</strong><br>Check MetaMask NFTs tab!</div>';
-                setTimeout(checkNFTStatus, 2000);
+                const currentScore = parseInt(await quiz.getScore(userAddr));
+                
+                if (currentScore < pointCost) {
+                    msg.innerHTML = `<div class="message error">Not enough points! You need ${pointCost} points but have ${currentScore}.</div>`;
+                    setTimeout(() => checkNFTStatus(), 2000);
+                    return;
+                }
+                
+                msg.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>✨ Minting your magical badge...</p>
+                        <p style="font-size: 0.9em; opacity: 0.8;">Please confirm in MetaMask!</p>
+                    </div>
+                `;
+                
+                // Mint the NFT
+                const mintTx = await nft.mint('ipfs://QmMathMintBadge/metadata.json');
+                msg.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>⏳ Minting in progress...</p>
+                        <p style="font-size: 0.9em; opacity: 0.8;">Waiting for blockchain confirmation...</p>
+                    </div>
+                `;
+                await mintTx.wait();
+                
+                // Deduct points (using updateScore with new score)
+                const newScore = currentScore - pointCost;
+                msg.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>💫 Deducting ${pointCost} points...</p>
+                        <p style="font-size: 0.9em; opacity: 0.8;">Please confirm in MetaMask again!</p>
+                    </div>
+                `;
+                
+                const scoreTx = await quiz.updateScore(userAddr, newScore);
+                await scoreTx.wait();
+                
+                // Get the badge that was minted
+                const badge = badgeTiers.find(b => b.points === pointCost);
+                
+                msg.innerHTML = `
+                    <div style="text-align: center; padding: 30px;">
+                        <div style="font-size: 7em; margin: 20px 0; animation: bounce 1s ease;">${badge.emoji}</div>
+                        <h2 style="font-size: 2.5em; color: ${badge.color}; margin: 15px 0;">🎉 SUCCESS! 🎉</h2>
+                        <div class="message success" style="margin: 20px 0;">
+                            <strong style="font-size: 1.3em;">You minted ${badge.name}!</strong><br><br>
+                            <div style="font-size: 1.05em; line-height: 1.8;">
+                                ✅ Badge added to your wallet<br>
+                                💎 ${pointCost} points used<br>
+                                ⭐ ${newScore} points remaining
+                            </div>
+                        </div>
+                        <p style="font-size: 1.1em; margin: 20px 0;">
+                            Check your MetaMask NFTs tab to see your new badge!<br>
+                            Keep playing to collect more! 🚀
+                        </p>
+                        <button class="success large" onclick="checkNFTStatus()" style="margin-top: 20px;">
+                            ✨ Check My Collection
+                        </button>
+                    </div>
+                `;
+                
+                // Refresh all data after a delay
+                setTimeout(() => {
+                    refreshBankData();
+                    loadLeaderboard();
+                }, 2000);
+                
             } catch (err) {
-                content.innerHTML = `<div class="message error">Minting failed: ${err.message}</div>`;
-                setTimeout(checkNFTStatus, 3000);
+                console.error('Minting error:', err);
+                let errorMsg = '<strong>❌ Minting Failed</strong><br>';
+                
+                if (err.message.includes('user rejected')) {
+                    errorMsg += 'You cancelled the transaction. No worries!';
+                } else if (err.message.includes('insufficient funds')) {
+                    errorMsg += 'Not enough tBTC for gas fees. Get some from the faucet!';
+                } else {
+                    errorMsg += err.message;
+                }
+                
+                msg.innerHTML = `<div class="message error">${errorMsg}</div>`;
+                setTimeout(() => checkNFTStatus(), 3000);
+            }
+        }
+        
+        // Keep old function for backwards compatibility
+        async function mintBadge() {
+            const savedScore = parseInt(await quiz.getScore(userAddr));
+            const badge = getBadgeForPoints(savedScore);
+            if (badge) {
+                await mintBadgeWithDeduction(badge.points);
             }
         }
         
