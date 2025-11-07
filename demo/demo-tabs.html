@@ -1123,15 +1123,42 @@
         // Quiz Logic
         function generateQuestions() {
             quizQuestions = [];
-            for (let i = 0; i < 5; i++) {
-                const a = Math.floor(Math.random() * 10) + 1;
-                const b = Math.floor(Math.random() * 10) + 1;
+            const maxNumber = (currentMode === 'rapid') ? 12 : 10;
+            
+            for (let i = 0; i < totalQuestions; i++) {
+                let a, b;
+                
+                if (practiceTable !== null) {
+                    // Practice mode - use selected table
+                    a = practiceTable;
+                    b = Math.floor(Math.random() * 10) + 1;
+                    if (Math.random() > 0.5) {
+                        [a, b] = [b, a]; // Randomize order sometimes
+                    }
+                } else {
+                    // Classic or Rapid mode - random tables
+                    a = Math.floor(Math.random() * maxNumber) + 1;
+                    b = Math.floor(Math.random() * maxNumber) + 1;
+                }
+                
                 const correct = a * b;
                 const options = [correct];
+                
+                // Generate wrong answers
                 while (options.length < 4) {
-                    const wrong = Math.floor(Math.random() * 100) + 1;
-                    if (!options.includes(wrong)) options.push(wrong);
+                    let wrong;
+                    if (correct < 20) {
+                        wrong = Math.floor(Math.random() * 50) + 1;
+                    } else if (correct < 50) {
+                        wrong = Math.floor(Math.random() * 100) + 1;
+                    } else {
+                        wrong = Math.floor(Math.random() * 150) + 1;
+                    }
+                    if (!options.includes(wrong) && wrong !== correct) {
+                        options.push(wrong);
+                    }
                 }
+                
                 options.sort(() => Math.random() - 0.5);
                 quizQuestions.push({ a, b, correct, options });
             }
