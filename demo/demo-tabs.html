@@ -229,17 +229,33 @@
         <!-- QUIZ TAB -->
         <div id="quizTab" class="tab-content active">
             
-            <!-- MUSD Boost Hint -->
-            <div id="boostHint" class="boost-hint hidden">
+            <!-- MUSD Boost Hint - Always Visible -->
+            <div id="boostHintNoMUSD" class="boost-hint">
                 <span style="font-size: 2em;">⚡</span>
                 <div style="flex: 1;">
-                    <strong id="boostText">Get MUSD for 1.5x boost!</strong>
-                    <a href="https://testnet.mezo.org/" target="_blank" style="color: #ffd700; font-weight: bold; text-decoration: underline; margin-left: 10px;">Swap Here</a>
+                    <strong style="font-size: 1.2em;">Want 1.5x BEAST MODE Points?</strong><br>
+                    <span style="font-size: 0.95em; opacity: 0.9;">Get MUSD tokens for a super boost! Each correct answer becomes 15 points instead of 10! 🔥</span>
                 </div>
-                <label class="toggle" id="boostToggleContainer" style="display: none;">
+                <a href="https://testnet.mezo.org/" target="_blank" style="padding: 12px 24px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; text-decoration: none; border-radius: 10px; font-weight: bold; white-space: nowrap; box-shadow: 0 4px 12px rgba(251,191,36,0.3);">
+                    🌟 Swap for MUSD
+                </a>
+            </div>
+            
+            <!-- MUSD Boost Enabled -->
+            <div id="boostHintWithMUSD" class="boost-hint active hidden">
+                <span style="font-size: 2em;">⚡</span>
+                <div style="flex: 1;">
+                    <strong style="font-size: 1.2em;">⚡ SECRET POWER-UP UNLOCKED!</strong><br>
+                    <span id="musdBalanceDisplay" style="font-size: 0.95em; opacity: 0.95;">You've got MUSD! Turn ON the boost before playing for 1.5x points! 🔥</span>
+                </div>
+                <label class="toggle">
                     <input type="checkbox" id="boostToggle" onchange="toggleBoost()">
                     <span class="slider"></span>
                 </label>
+            </div>
+            
+            <div id="boostActiveMsg" class="message success hidden" style="margin-top: 15px;">
+                ✅ <strong>Boost Active!</strong> Earning 15 points per correct answer this session! 🚀
             </div>
             
             <!-- Quiz Card -->
