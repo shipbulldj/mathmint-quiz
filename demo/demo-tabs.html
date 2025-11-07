@@ -288,6 +288,8 @@
                 
                 <!-- Quiz Results -->
                 <div id="quizResults" class="hidden">
+                    <h2 style="font-size: 2.5em; text-align: center; margin: 20px 0;">🎉 Quiz Complete!</h2>
+                    
                     <div class="stats">
                         <div class="stat">
                             <span class="stat-value" id="correctCount">0</span>
@@ -303,9 +305,19 @@
                         </div>
                     </div>
                     
-                    <div style="text-align: center; margin: 20px 0;">
-                        <button class="success large" onclick="saveScore()">💾 Save to My Bank</button>
-                        <button onclick="playAgain()">Play Again</button>
+                    <div id="boostAppliedMessage" class="message warning hidden" style="margin: 20px 0;">
+                        <strong>⚡ MUSD Boost Applied!</strong><br>
+                        Your points were boosted by 1.5x because you had the boost enabled! 🔥
+                    </div>
+                    
+                    <div id="walletRequiredMsg" class="message info hidden" style="margin: 20px 0;">
+                        <strong>💾 Want to Keep These Points Forever?</strong><br>
+                        Connect your bank in the "Bank" tab! Don't have one yet? We'll guide you through creating it - super easy! 🏦✨
+                    </div>
+                    
+                    <div style="text-align: center; margin: 25px 0;">
+                        <button class="success large" onclick="saveScore()">💾 Save Points to My Bank!</button>
+                        <button onclick="playAgain()">🔄 Play Again</button>
                     </div>
                     
                     <div id="saveMessage" class="message hidden"></div>
