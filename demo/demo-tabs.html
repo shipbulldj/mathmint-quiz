@@ -1177,7 +1177,78 @@
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 15px;">
                 `;
                 
-                // Display collected badges
+                // Display each badge tier with status
+                badgeTiers.forEach((badge, index) => {
+                    const canMint = savedScore >= badge.points;
+                    const tierNum = index + 1;
+                    // For now, we'll simulate mint status - in real implementation, check hasUserMintedTier(userAddr, tierNum)
+                    const isMinted = false; // This should be: await nft.hasUserMintedTier(userAddr, tierNum) with updated contract
+                    
+                    let statusHTML = '';
+                    let cardStyle = 'background: rgba(0,0,0,0.2); opacity: 0.5;'; // Locked
+                    let badgeEmoji = `<div style="font-size: 3em; margin: 10px 0; filter: grayscale(100%);">${badge.emoji}</div>`;
+                    
+                    if (isMinted) {
+                        // Already minted
+                        statusHTML = '<div style="background: #10b981; padding: 5px; border-radius: 5px; font-size: 0.85em; margin-top: 8px;">✓ Owned</div>';
+                        cardStyle = `background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.2)); border: 2px solid ${badge.color};`;
+                        badgeEmoji = `<div style="font-size: 3em; margin: 10px 0;">${badge.emoji}</div>`;
+                    } else if (canMint) {
+                        // Can mint now
+                        statusHTML = `<button class="success" style="width: 100%; padding: 8px; font-size: 0.85em; margin-top: 8px;" onclick="mintBadgeWithDeduction(${badge.points})">Mint for ${badge.points} pts</button>`;
+                        cardStyle = `background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(245,158,11,0.2)); border: 2px solid ${badge.color};`;
+                        badgeEmoji = `<div style="font-size: 3em; margin: 10px 0;">${badge.emoji}</div>`;
+                    } else {
+                        // Locked - need more points
+                        const needed = badge.points - savedScore;
+                        statusHTML = `<div style="font-size: 0.8em; opacity: 0.7; margin-top: 8px;">Need ${needed} more</div>`;
+                    }
+                    
+                    badgeHTML += `
+                        <div style="${cardStyle} padding: 15px; border-radius: 12px; text-align: center; position: relative;">
+                            <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.5); padding: 3px 8px; border-radius: 10px; font-size: 0.75em;">Lv ${badge.level}</div>
+                            ${badgeEmoji}
+                            <strong style="font-size: 0.95em; display: block; margin: 5px 0;">${badge.name}</strong>
+                            <div style="font-size: 0.8em; opacity: 0.8;">${badge.points} pts</div>
+                            ${statusHTML}
+                        </div>
+                    `;
+                });
+                
+                badgeHTML += `
+                        </div>
+                    </div>
+                `;
+                
+                // Show tips based on status
+                const nextUnminted = badgeTiers.find(b => savedScore >= b.points); // First mintable
+                if (nextUnminted && balance < 5) {
+                    badgeHTML += `
+                        <div class="message info" style="margin-top: 15px;">
+                            <strong>💡 Ready to mint!</strong><br>
+                            Click the "Mint" button on ${nextUnminted.name} to add it to your collection!<br>
+                            <span style="font-size: 0.9em;">Minting will use ${nextUnminted.points} of your points.</span>
+                        </div>
+                    `;
+                } else if (balance === 5) {
+                    badgeHTML += `
+                        <div class="message success" style="margin-top: 15px; text-align: center;">
+                            <strong style="font-size: 1.3em;">👑 LEGENDARY COLLECTION COMPLETE! 👑</strong><br>
+                            <p style="margin: 10px 0;">You've collected all 5 magical badges! You're a MathMint legend! 🏆</p>
+                        </div>
+                    `;
+                } else if (savedScore < 50) {
+                    badgeHTML += `
+                        <div class="message info" style="margin-top: 15px;">
+                            <strong>🎮 Keep Playing!</strong><br>
+                            Earn ${50 - savedScore} more points to unlock your first badge!
+                        </div>
+                    `;
+                }
+                
+                content.innerHTML = badgeHTML;
+                
+                /* OLD COMPLEX DISPLAY CODE - REMOVED FOR COMPACT VERSION
                 if (balance > 0) {
                     let badgeDisplay = `
                         <div style="text-align: center; margin: 20px 0;">
