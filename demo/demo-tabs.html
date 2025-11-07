@@ -635,7 +635,7 @@
         
         // Refresh Bank Data
         async function refreshBankData() {
-            document.getElementById('walletAddress').textContent = '📍 ' + userAddr;
+            document.getElementById('walletAddress').textContent = '📍 ' + userAddr.substring(0, 8) + '...' + userAddr.substring(38);
             
             // Get tBTC balance
             try {
@@ -643,10 +643,11 @@
                 const tbtc = parseFloat(ethers.utils.formatEther(balance)).toFixed(4);
                 document.getElementById('tbtcBalance').textContent = tbtc;
             } catch (err) {
+                console.error('tBTC balance error:', err);
                 document.getElementById('tbtcBalance').textContent = 'Error';
             }
             
-            // Get MUSD balance
+            // Get MUSD balance and update boost hints
             try {
                 const balance = await musd.balanceOf(userAddr);
                 const decimals = await musd.decimals();
@@ -654,15 +655,21 @@
                 document.getElementById('musdBalance').textContent = musdBalance.toFixed(2);
                 
                 if (musdBalance >= 1) {
+                    // User has MUSD - show the toggle
                     document.getElementById('musdStatus').textContent = '✅ Boost available!';
-                    document.getElementById('boostText').textContent = 'MUSD Boost Available! Enable below:';
-                    document.getElementById('boostToggleContainer').style.display = 'block';
-                    document.getElementById('boostHint').classList.add('active');
+                    document.getElementById('boostHintNoMUSD').classList.add('hidden');
+                    document.getElementById('boostHintWithMUSD').classList.remove('hidden');
+                    document.getElementById('musdBalanceDisplay').textContent = `You have ${musdBalance.toFixed(2)} MUSD! Turn ON the boost before playing for 1.5x points! 🔥`;
                 } else {
+                    // User doesn't have MUSD - show the swap prompt
                     document.getElementById('musdStatus').textContent = 'Need 1+ MUSD for boost';
+                    document.getElementById('boostHintNoMUSD').classList.remove('hidden');
+                    document.getElementById('boostHintWithMUSD').classList.add('hidden');
                 }
             } catch (err) {
+                console.error('MUSD balance error:', err);
                 document.getElementById('musdBalance').textContent = 'Error';
+                document.getElementById('musdStatus').textContent = 'Error loading';
             }
             
             // Get saved quiz points
@@ -670,6 +677,7 @@
                 const score = await quiz.getScore(userAddr);
                 document.getElementById('savedPoints').textContent = score.toString();
             } catch (err) {
+                console.error('Quiz score error:', err);
                 document.getElementById('savedPoints').textContent = 'Error';
             }
             
