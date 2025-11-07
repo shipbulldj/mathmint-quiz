@@ -13,9 +13,21 @@ A fully functional, single-page Web3 quiz application that lets you:
 
 ## 📍 Files
 
-- **`demo.html`** - Main demo file (READY FOR IPFS DEPLOYMENT)
+- **`demo.html`** - Full-featured demo (READY FOR IPFS DEPLOYMENT)
+- **`demo-simple.html`** - Simplified version with cleaner panels
+- **`demo-tabs.html`** - **NEW!** Modern tabbed interface (Recommended)
 - **`index.html`** - Legacy file (deprecated, use demo.html)
 - **`index-fixed.html`** - Fixed version of index.html
+
+### 🆕 Which Demo Should I Use?
+
+| Demo | Best For | Key Features |
+|------|----------|--------------|
+| **demo-tabs.html** | **Most users** | Tabbed UI, auto-fetch data, best organization |
+| demo.html | Full features | Everything in one scrolling page |
+| demo-simple.html | Simplicity | Minimal, straightforward interface |
+
+**NEW:** Check out [TABS_UI_GUIDE.md](TABS_UI_GUIDE.md) for the complete guide to the tabbed interface!
 
 ## 🚀 Quick Start
 
