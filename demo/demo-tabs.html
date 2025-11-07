@@ -1057,40 +1057,145 @@
             checkNFTStatus();
         }
         
+        // Badge Tiers System
+        const badgeTiers = [
+            { level: 1, name: "Baby Dragon", emoji: "🐲", points: 50, color: "#f093fb", description: "Your first magical friend!" },
+            { level: 2, name: "Sparkle Unicorn", emoji: "🦄✨", points: 100, color: "#f5576c", description: "Rare and sparkly!" },
+            { level: 3, name: "Rainbow Panda", emoji: "🐼🌈", points: 200, color: "#4facfe", description: "Super rare cuteness!" },
+            { level: 4, name: "Galaxy Kitten", emoji: "🐱⭐", points: 500, color: "#00f2fe", description: "Epic cosmic companion!" },
+            { level: 5, name: "Legendary Phoenix", emoji: "🔥🦅", points: 1000, color: "#ffd700", description: "Ultra legendary!" }
+        ];
+        
+        function getBadgeForPoints(points) {
+            for (let i = badgeTiers.length - 1; i >= 0; i--) {
+                if (points >= badgeTiers[i].points) {
+                    return badgeTiers[i];
+                }
+            }
+            return null;
+        }
+        
+        function getNextBadge(points) {
+            for (let i = 0; i < badgeTiers.length; i++) {
+                if (points < badgeTiers[i].points) {
+                    return badgeTiers[i];
+                }
+            }
+            return null;
+        }
+        
         async function checkNFTStatus() {
             const content = document.getElementById('nftContent');
             try {
                 const hasMinted = await nft.hasMinted(userAddr);
                 const canMint = await quiz.canMintNFT(userAddr);
-                const savedScore = await quiz.getScore(userAddr);
+                const savedScore = parseInt(await quiz.getScore(userAddr));
                 
                 if (hasMinted) {
                     const balance = await nft.balanceOf(userAddr);
+                    const currentBadge = getBadgeForPoints(savedScore);
+                    
+                    let badgeDisplay = '';
+                    if (currentBadge) {
+                        badgeDisplay = `
+                            <div style="text-align: center; margin: 20px 0;">
+                                <div style="font-size: 5em; margin: 20px 0;">${currentBadge.emoji}</div>
+                                <h3 style="font-size: 1.8em; color: ${currentBadge.color}; margin: 10px 0;">${currentBadge.name}</h3>
+                                <p style="font-size: 1.1em; opacity: 0.9;">${currentBadge.description}</p>
+                                <div style="background: rgba(255,215,0,0.2); padding: 12px; border-radius: 10px; margin-top: 15px;">
+                                    <strong>Level ${currentBadge.level} Badge Holder!</strong><br>
+                                    You've earned ${savedScore} points! 🌟
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    const nextBadge = getNextBadge(savedScore);
+                    let nextBadgeInfo = '';
+                    if (nextBadge) {
+                        const pointsNeeded = nextBadge.points - savedScore;
+                        nextBadgeInfo = `
+                            <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-top: 20px;">
+                                <strong>🎯 Next Badge: ${nextBadge.emoji} ${nextBadge.name}</strong><br>
+                                <span style="font-size: 0.95em; opacity: 0.9;">Only ${pointsNeeded} more points to unlock!</span>
+                                <div style="background: rgba(0,0,0,0.2); height: 10px; border-radius: 5px; margin: 10px 0; overflow: hidden;">
+                                    <div style="height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); width: ${(savedScore / nextBadge.points * 100)}%; transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        nextBadgeInfo = `
+                            <div style="background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,170,0,0.3)); padding: 15px; border-radius: 10px; margin-top: 20px; border: 2px solid rgba(255,215,0,0.5);">
+                                <strong>👑 MAX LEVEL ACHIEVED!</strong><br>
+                                <span style="font-size: 0.95em;">You've collected all badges! You're a legend! 🏆</span>
+                            </div>
+                        `;
+                    }
+                    
                     content.innerHTML = `
                         <div class="message success">
                             <strong>🎉 You own ${balance} MathMint Badge${balance > 1 ? 's' : ''}!</strong><br>
-                            Check your MetaMask NFTs tab to view it!
+                            Check your MetaMask NFTs tab to view them!
                         </div>
+                        ${badgeDisplay}
+                        ${nextBadgeInfo}
                     `;
                 } else if (canMint) {
+                    const badge = getBadgeForPoints(savedScore);
                     content.innerHTML = `
-                        <div class="message success">
-                            <strong>✅ Eligible to Mint!</strong><br>
-                            You have ${savedScore} points (need 50+)
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 6em; margin: 20px 0;">${badge.emoji}</div>
+                            <h3 style="font-size: 2em; color: ${badge.color}; margin: 10px 0;">Ready to Mint!</h3>
+                            <div style="background: linear-gradient(135deg, rgba(${badge.color === '#f093fb' ? '240,147,251' : '245,87,108'},0.3), rgba(255,215,0,0.3)); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                                <h4 style="font-size: 1.5em; margin: 10px 0;">🎨 ${badge.name}</h4>
+                                <p style="font-size: 1.1em; margin: 10px 0;">${badge.description}</p>
+                                <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 10px;">
+                                    <strong>Level ${badge.level} Badge</strong><br>
+                                    <span style="font-size: 0.9em;">You've earned ${savedScore} points!</span>
+                                </div>
+                            </div>
+                            <button class="success large" onclick="mintBadge()" style="font-size: 1.3em; padding: 20px 40px;">
+                                ✨ Mint My ${badge.name}! ✨
+                            </button>
                         </div>
-                        <button class="success large" onclick="mintBadge()">🎨 Mint My Badge!</button>
                     `;
                 } else {
-                    const needed = 50 - parseInt(savedScore);
+                    const nextBadge = badgeTiers[0]; // First badge
+                    const needed = nextBadge.points - savedScore;
+                    const progress = (savedScore / nextBadge.points * 100);
+                    
                     content.innerHTML = `
-                        <div class="message info">
-                            <strong>Keep Playing! 🎯</strong><br>
-                            You have ${savedScore} points. Need ${needed} more points to mint your badge!
+                        <div style="text-align: center;">
+                            <div style="font-size: 4em; margin: 20px 0; opacity: 0.5; filter: grayscale(100%);">${nextBadge.emoji}</div>
+                            <h3 style="font-size: 1.5em; margin: 10px 0;">Almost There!</h3>
+                            <p style="font-size: 1.1em; margin: 15px 0;">
+                                Collect <strong>${needed} more points</strong> to unlock your first badge:<br>
+                                <strong style="color: ${nextBadge.color};">${nextBadge.name} ${nextBadge.emoji}</strong>
+                            </p>
+                            <div style="background: rgba(0,0,0,0.2); height: 20px; border-radius: 10px; margin: 20px 0; overflow: hidden;">
+                                <div style="height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); width: ${progress}%; transition: width 0.5s;"></div>
+                            </div>
+                            <p style="font-size: 1.05em; opacity: 0.9;">You have ${savedScore} / ${nextBadge.points} points</p>
+                            
+                            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-top: 25px;">
+                                <strong style="font-size: 1.2em;">🌟 All Available Badges:</strong>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
+                                    ${badgeTiers.map(badge => `
+                                        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; ${savedScore >= badge.points ? `border: 2px solid ${badge.color};` : 'opacity: 0.5;'}">
+                                            <div style="font-size: 2.5em;">${badge.emoji}</div>
+                                            <strong>${badge.name}</strong><br>
+                                            <span style="font-size: 0.85em;">Level ${badge.level}</span><br>
+                                            <span style="font-size: 0.8em;">${badge.points} pts</span>
+                                            ${savedScore >= badge.points ? '<br><span style="color: #10b981; font-size: 0.9em;">✓ Unlocked!</span>' : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
                         </div>
                     `;
                 }
             } catch (err) {
-                content.innerHTML = `<div class="message error">Error checking NFT status: ${err.message}</div>`;
+                content.innerHTML = `<div class="message error">Error checking badge status: ${err.message}</div>`;
             }
         }
         
