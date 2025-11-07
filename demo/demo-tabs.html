@@ -230,50 +230,71 @@
         <!-- QUIZ TAB -->
         <div id="quizTab" class="tab-content active">
             
-            <!-- MUSD Boost Hint - Always Visible -->
-            <div id="boostHintNoMUSD" class="boost-hint">
-                <span style="font-size: 2em;">⚡</span>
-                <div style="flex: 1;">
-                    <strong style="font-size: 1.2em;">Want 1.5x BEAST MODE Points?</strong><br>
-                    <span style="font-size: 0.95em; opacity: 0.9;">Get MUSD tokens for a super boost! Each correct answer becomes 15 points instead of 10! 🔥</span>
-                </div>
-                <a href="https://testnet.mezo.org/" target="_blank" style="padding: 12px 24px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; text-decoration: none; border-radius: 10px; font-weight: bold; white-space: nowrap; box-shadow: 0 4px 12px rgba(251,191,36,0.3);">
-                    🌟 Swap for MUSD
-                </a>
-            </div>
-            
-            <!-- MUSD Boost Enabled -->
-            <div id="boostHintWithMUSD" class="boost-hint active hidden">
-                <span style="font-size: 2em;">⚡</span>
-                <div style="flex: 1;">
-                    <strong style="font-size: 1.2em;">⚡ SECRET POWER-UP UNLOCKED!</strong><br>
-                    <span id="musdBalanceDisplay" style="font-size: 0.95em; opacity: 0.95;">You've got MUSD! Turn ON the boost before playing for 1.5x points! 🔥</span>
-                </div>
-                <label class="toggle">
-                    <input type="checkbox" id="boostToggle" onchange="toggleBoost()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div id="boostActiveMsg" class="message success hidden" style="margin-top: 15px;">
-                ✅ <strong>Boost Active!</strong> Earning 15 points per correct answer this session! 🚀
-            </div>
-            
             <!-- Quiz Card -->
             <div class="card">
                 <h2>🎯 Times Tables Challenge</h2>
                 
-                <!-- Quiz Start -->
-                <div id="quizStart" class="quiz-box">
-                    <p style="font-size: 1.4em; margin: 20px 0; font-weight: 600;">🎉 Ready to Test Your Times Tables?</p>
-                    <p style="font-size: 1.1em; margin: 15px 0;">No wallet needed! Just click and play!</p>
-                    <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin: 25px 0; text-align: left;">
-                        <div style="margin: 10px 0; font-size: 1.05em;">✅ Get <strong>10 points</strong> for each correct answer</div>
-                        <div style="margin: 10px 0; font-size: 1.05em;">❌ Lose <strong>1 point</strong> for wrong answers</div>
-                        <div style="margin: 10px 0; font-size: 1.05em;">⏱️ You have <strong>15 seconds</strong> per question</div>
-                        <div style="margin: 10px 0; font-size: 1.05em;">⚡ <strong>Pro Tip:</strong> Enable MUSD boost above for 1.5x points!</div>
+                <!-- Mode Selection -->
+                <div id="modeSelection" class="quiz-box">
+                    <p style="font-size: 1.4em; margin: 20px 0; font-weight: 600;">🎮 Choose Your Challenge!</p>
+                    <p style="font-size: 1.05em; margin: 15px 0; opacity: 0.9;">Pick a mode and start learning! No wallet needed!</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+                        <!-- Classic Mode -->
+                        <div class="mode-card" onclick="selectMode('classic')" style="background: rgba(74,172,254,0.2); padding: 25px; border-radius: 15px; cursor: pointer; border: 3px solid transparent; transition: all 0.3s;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">🎯</div>
+                            <h3 style="margin: 10px 0;">Classic</h3>
+                            <p style="font-size: 0.95em; opacity: 0.9; line-height: 1.6;">
+                                5 questions<br>
+                                Random tables (1-10)<br>
+                                15 seconds each<br>
+                                Perfect for quick play!
+                            </p>
+                        </div>
+                        
+                        <!-- Practice Mode -->
+                        <div class="mode-card" onclick="selectMode('practice')" style="background: rgba(255,215,0,0.2); padding: 25px; border-radius: 15px; cursor: pointer; border: 3px solid transparent; transition: all 0.3s;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">📚</div>
+                            <h3 style="margin: 10px 0;">Practice</h3>
+                            <p style="font-size: 0.95em; opacity: 0.9; line-height: 1.6;">
+                                10 questions<br>
+                                Pick your table (2-12)<br>
+                                15 seconds each<br>
+                                Master one table!
+                            </p>
+                        </div>
+                        
+                        <!-- Rapid Fire Mode -->
+                        <div class="mode-card" onclick="selectMode('rapid')" style="background: rgba(239,68,68,0.2); padding: 25px; border-radius: 15px; cursor: pointer; border: 3px solid transparent; transition: all 0.3s;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">⚡</div>
+                            <h3 style="margin: 10px 0;">Rapid Fire</h3>
+                            <p style="font-size: 0.95em; opacity: 0.9; line-height: 1.6;">
+                                20 questions<br>
+                                Random tables (1-12)<br>
+                                10 seconds each<br>
+                                For speed demons!
+                            </p>
+                        </div>
                     </div>
-                    <button class="large success" onclick="startQuiz()">🚀 Start Quiz!</button>
+                </div>
+                
+                <!-- Practice Table Selection -->
+                <div id="tableSelection" class="quiz-box hidden">
+                    <p style="font-size: 1.4em; margin: 20px 0; font-weight: 600;">📚 Pick Your Table to Practice</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 15px; margin: 30px 0;">
+                        <button onclick="startPractice(2)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">2x</button>
+                        <button onclick="startPractice(3)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">3x</button>
+                        <button onclick="startPractice(4)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">4x</button>
+                        <button onclick="startPractice(5)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">5x</button>
+                        <button onclick="startPractice(6)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">6x</button>
+                        <button onclick="startPractice(7)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">7x</button>
+                        <button onclick="startPractice(8)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">8x</button>
+                        <button onclick="startPractice(9)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">9x</button>
+                        <button onclick="startPractice(10)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">10x</button>
+                        <button onclick="startPractice(11)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">11x</button>
+                        <button onclick="startPractice(12)" class="table-btn" style="padding: 20px; font-size: 1.5em; font-weight: bold; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; cursor: pointer;">12x</button>
+                    </div>
+                    <button onclick="backToModes()" style="margin-top: 20px;">← Back to Modes</button>
                 </div>
                 
                 <!-- Quiz Play -->
