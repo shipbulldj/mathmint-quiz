@@ -1211,7 +1211,7 @@
         }
         
         function startTimer() {
-            timeLeft = 15;
+            timeLeft = questionTimeLimit;
             document.getElementById('timer').textContent = timeLeft;
             document.getElementById('timer').classList.remove('warning');
             
@@ -1220,7 +1220,8 @@
                 timeLeft--;
                 document.getElementById('timer').textContent = timeLeft;
                 
-                if (timeLeft <= 5) {
+                const warningThreshold = questionTimeLimit <= 10 ? 3 : 5;
+                if (timeLeft <= warningThreshold) {
                     document.getElementById('timer').classList.add('warning');
                 }
                 
