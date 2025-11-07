@@ -416,49 +416,108 @@
         
     </div>
     
-    <!-- Modals (same as before) -->
-    <div id="welcomeModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000;">
-        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 20px; max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <h2 style="text-align: center; margin-bottom: 20px;">🏦 Welcome to Your Bank of Good Times!</h2>
-            <p style="text-align: center; font-size: 1.2em; margin-bottom: 20px;">🎉 You're about to become your own bank!</p>
-            <div style="background: rgba(255,255,255,0.1); padding: 15px; margin: 15px 0; border-radius: 10px;">
-                <h3>🔑 Quick Security Tips:</h3>
-                <ul style="line-height: 2; margin-left: 20px;">
-                    <li>Never share your seed phrase</li>
-                    <li>Write it on paper, not phone</li>
-                    <li>This is testnet - safe to learn!</li>
-                    <li>You're in control of everything</li>
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px);">
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 20px; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+            <h2 style="text-align: center; margin-bottom: 15px; font-size: 2em; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 15px;">🏦 Welcome to Your Bank of Good Times!</h2>
+            <p style="text-align: center; font-size: 1.3em; margin-bottom: 25px; font-weight: 600;">
+                🎉 <strong>Congratulations!</strong> You're about to become your own bank!
+            </p>
+            
+            <div style="background: rgba(255,255,255,0.15); padding: 20px; margin: 20px 0; border-radius: 12px; border-left: 4px solid #4facfe;">
+                <h3 style="margin: 0 0 12px 0; font-size: 1.3em;">✨ What Makes This Special?</h3>
+                <p style="line-height: 1.7; font-size: 1.05em;">Unlike regular banks, <strong>YOU are in complete control</strong>. No middleman, no permissions needed, no one can freeze your funds. This is financial freedom!</p>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.15); padding: 20px; margin: 20px 0; border-radius: 12px; border-left: 4px solid #4facfe;">
+                <h3 style="margin: 0 0 12px 0; font-size: 1.3em;">🔑 5 Quick Security Tips (30 seconds!)</h3>
+                <ul style="line-height: 2; margin-left: 20px; font-size: 1.05em;">
+                    <li><strong>Never share your seed phrase</strong> - Not even with "support"! It's like your master password.</li>
+                    <li><strong>Write it on paper</strong> - Not on your phone. Paper can't be hacked!</li>
+                    <li><strong>This is testnet</strong> - Safe to learn! Free coins, zero risk.</li>
+                    <li><strong>You're in control</strong> - Every transaction needs YOUR approval.</li>
+                    <li><strong>Start small</strong> - Test everything before doing anything major.</li>
                 </ul>
             </div>
-            <div style="margin: 20px 0; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px;">
-                <input type="checkbox" id="understandCheck" style="width: 20px; height: 20px; margin-right: 10px;">
-                <label for="understandCheck" style="font-size: 1.1em;">I understand!</label>
+            
+            <div style="background: rgba(255,215,0,0.2); padding: 20px; margin: 20px 0; border-radius: 12px; border-left: 4px solid #ffd700;">
+                <h3 style="margin: 0 0 10px 0; font-size: 1.2em;">💪 You've Got This!</h3>
+                <p style="line-height: 1.7; font-size: 1.05em;">Millions of people use self-custody every day. The difference? They took the first step - just like you're doing now!</p>
             </div>
-            <div style="display: flex; gap: 15px;">
-                <button onclick="closeWelcomeModal()" style="flex: 1; background: rgba(255,255,255,0.2);">Maybe Later</button>
-                <button id="continueBtn" onclick="proceedFromModal()" disabled style="flex: 1;">Let's Go! 🚀</button>
+            
+            <div style="margin: 25px 0; padding: 18px; background: rgba(255,215,0,0.15); border: 2px solid rgba(255,215,0,0.4); border-radius: 12px; display: flex; align-items: center;">
+                <input type="checkbox" id="understandCheck" style="width: 22px; height: 22px; margin-right: 12px; cursor: pointer;">
+                <label for="understandCheck" style="font-size: 1.15em; font-weight: 600; cursor: pointer;">I understand I'm in control and will keep my seed phrase safe!</label>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="closeWelcomeModal()" style="flex: 1; background: rgba(255,255,255,0.2); padding: 15px; font-size: 1.1em;">Maybe Later</button>
+                <button id="continueBtn" onclick="proceedFromModal()" disabled style="flex: 1; padding: 15px; font-size: 1.1em;">Let's Go! 🚀</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 18px; font-size: 0.95em;">
+                <a href="../SECURITY_GUIDE.md" target="_blank" style="color: #4facfe; text-decoration: underline;">📚 Want to learn more? Read our complete Security Guide</a>
             </div>
         </div>
     </div>
     
-    <div id="createBankModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000;">
-        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 20px; max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <h2 style="text-align: center; margin-bottom: 20px;">🌟 Let's Create Your First Bank!</h2>
-            <div style="background: rgba(255,255,255,0.1); padding: 20px; margin: 15px 0; border-radius: 10px;">
-                <h3>1. Install MetaMask</h3>
-                <p>Go to <a href="https://metamask.io" target="_blank" style="color: #4facfe;">metamask.io</a> and install</p>
+    <!-- Create Bank Guide Modal -->
+    <div id="createBankModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px);">
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px; border-radius: 20px; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+            <h2 style="text-align: center; margin-bottom: 15px; font-size: 2em; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 15px;">🌟 Let's Create Your First Bank!</h2>
+            <p style="text-align: center; font-size: 1.2em; margin-bottom: 25px;">
+                🎉 <strong>Exciting!</strong> You're about to open your own bank. Let me walk you through it, friend!
+            </p>
+            
+            <div style="background: rgba(255,255,255,0.15); padding: 20px; margin: 15px 0; border-radius: 12px; border-left: 4px solid #4facfe;">
+                <h3 style="margin: 0 0 10px 0; font-size: 1.3em;">🦊 Step 1: Install MetaMask (Your Bank Manager)</h3>
+                <p style="line-height: 1.7; font-size: 1.05em; margin-bottom: 12px;"><strong>MetaMask</strong> is like your bank manager, but YOU are the boss! It's free and takes 2 minutes.</p>
+                <ol style="line-height: 2; margin-left: 20px; font-size: 1.05em;">
+                    <li>Click this link: <a href="https://metamask.io" target="_blank" style="color: #4facfe; font-weight: bold; text-decoration: underline;">metamask.io</a></li>
+                    <li>Click "Download" for your browser</li>
+                    <li>Add the extension (it's a cute fox 🦊)</li>
+                    <li>Click "Create a wallet"</li>
+                </ol>
             </div>
-            <div style="background: rgba(255,255,255,0.1); padding: 20px; margin: 15px 0; border-radius: 10px;">
-                <h3>2. Write Down Your Seed Phrase</h3>
-                <p>📝 Write these words on PAPER (super important!)</p>
+            
+            <div style="background: rgba(255,255,255,0.15); padding: 20px; margin: 15px 0; border-radius: 12px; border-left: 4px solid #4facfe;">
+                <h3 style="margin: 0 0 10px 0; font-size: 1.3em;">🔑 Step 2: Save Your Secret Phrase (SUPER IMPORTANT!)</h3>
+                <p style="line-height: 1.7; font-size: 1.05em; margin-bottom: 12px;">MetaMask will show you 12 special words. This is your <strong>master key</strong>!</p>
+                <ul style="line-height: 2; margin-left: 20px; font-size: 1.05em;">
+                    <li><strong>Write these words on paper</strong> 📝 Right now!</li>
+                    <li><strong>Store paper somewhere safe</strong> 🔒 Like a drawer or safe</li>
+                    <li><strong>Never share with ANYONE</strong> 🚫 Not even "support"</li>
+                    <li><strong>Don't take a photo</strong> 📸 Paper can't be hacked!</li>
+                </ul>
+                <div style="background: rgba(255,68,68,0.3); padding: 15px; border-radius: 10px; border-left: 4px solid #ef4444; margin-top: 12px;">
+                    ⚠️ <strong>CRITICAL:</strong> If you lose these words, you lose your bank forever. No recovery possible!
+                </div>
             </div>
-            <div style="background: rgba(255,255,255,0.1); padding: 20px; margin: 15px 0; border-radius: 10px;">
-                <h3>3. Come Back Here!</h3>
-                <p>Click "Connect My Bank" once MetaMask is installed</p>
+            
+            <div style="background: rgba(255,255,255,0.15); padding: 20px; margin: 15px 0; border-radius: 12px; border-left: 4px solid #4facfe;">
+                <h3 style="margin: 0 0 10px 0; font-size: 1.3em;">🎮 Step 3: Come Back Here!</h3>
+                <p style="line-height: 1.7; font-size: 1.05em;">Once MetaMask is installed:</p>
+                <ol style="line-height: 2; margin-left: 20px; font-size: 1.05em;">
+                    <li>You'll see the fox icon 🦊 in your browser</li>
+                    <li>Come back to this page</li>
+                    <li>Click "Connect to My Bank" button</li>
+                    <li>We'll help you connect! 🎉</li>
+                </ol>
             </div>
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button onclick="closeCreateBankModal()" style="flex: 1; background: rgba(255,255,255,0.2);">Close</button>
-                <button onclick="openMetaMaskSite()" class="success" style="flex: 1;">Take Me to MetaMask! 🦊</button>
+            
+            <div style="background: rgba(255,215,0,0.2); padding: 18px; margin: 20px 0; border-radius: 12px; border-left: 4px solid #ffd700;">
+                <h3 style="margin: 0 0 8px 0; font-size: 1.2em;">💡 Pro Tip: This is Safe Practice!</h3>
+                <p style="line-height: 1.7; font-size: 1.05em;">You'll be using <strong>testnet</strong> - fake money for learning! No risk, pure practice. When you're comfortable, you can graduate to real crypto. Baby steps! 👶➡️🚀</p>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button onclick="closeCreateBankModal()" style="flex: 1; background: rgba(255,255,255,0.2); padding: 15px; font-size: 1.1em;">Close</button>
+                <button onclick="openMetaMaskSite()" class="success" style="flex: 1; padding: 15px; font-size: 1.1em;">Take Me to MetaMask! 🦊</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 18px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                <strong style="font-size: 1.05em;">Questions? Confused?</strong><br>
+                <a href="../SECURITY_GUIDE.md" target="_blank" style="color: #4facfe; font-weight: bold; text-decoration: underline;">Read our beginner-friendly Security Guide</a>
             </div>
         </div>
     </div>
