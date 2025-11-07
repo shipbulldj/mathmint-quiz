@@ -996,14 +996,27 @@
                 if (musdBalance >= 1) {
                     // User has MUSD - show the toggle
                     document.getElementById('musdStatus').textContent = '✅ Boost available!';
-                    document.getElementById('boostHintNoMUSD').classList.add('hidden');
-                    document.getElementById('boostHintWithMUSD').classList.remove('hidden');
-                    document.getElementById('musdBalanceDisplay').textContent = `You have ${musdBalance.toFixed(2)} MUSD! Turn ON the boost before playing for 1.5x points! 🔥`;
+                    
+                    // Update boost hints if they exist (they're in Quiz tab)
+                    const boostHintNoMUSD = document.getElementById('boostHintNoMUSD');
+                    const boostHintWithMUSD = document.getElementById('boostHintWithMUSD');
+                    const musdBalanceDisplay = document.getElementById('musdBalanceDisplay');
+                    
+                    if (boostHintNoMUSD) boostHintNoMUSD.classList.add('hidden');
+                    if (boostHintWithMUSD) boostHintWithMUSD.classList.remove('hidden');
+                    if (musdBalanceDisplay) {
+                        musdBalanceDisplay.textContent = `You have ${musdBalance.toFixed(2)} MUSD! Turn ON the boost before playing for 1.5x points! 🔥`;
+                    }
                 } else {
                     // User doesn't have MUSD - show the swap prompt
                     document.getElementById('musdStatus').textContent = 'Need 1+ MUSD for boost';
-                    document.getElementById('boostHintNoMUSD').classList.remove('hidden');
-                    document.getElementById('boostHintWithMUSD').classList.add('hidden');
+                    
+                    // Update boost hints if they exist (they're in Quiz tab)
+                    const boostHintNoMUSD = document.getElementById('boostHintNoMUSD');
+                    const boostHintWithMUSD = document.getElementById('boostHintWithMUSD');
+                    
+                    if (boostHintNoMUSD) boostHintNoMUSD.classList.remove('hidden');
+                    if (boostHintWithMUSD) boostHintWithMUSD.classList.add('hidden');
                 }
             } catch (err) {
                 console.error('MUSD balance error:', err);
