@@ -583,7 +583,13 @@
         
         // Initialize
         window.addEventListener('load', () => {
+            // Show the "Get MUSD" hint by default
+            document.getElementById('boostHintNoMUSD').classList.remove('hidden');
+            
+            // Load leaderboard automatically
             loadLeaderboard();
+            
+            // Check if wallet is already connected
             checkWalletConnection();
         });
         
