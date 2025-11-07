@@ -939,26 +939,31 @@
             const msg = document.getElementById('saveMessage');
             if (!userAddr || !quiz) {
                 msg.className = 'message warning';
-                msg.textContent = '⚠️ Connect your bank first! Switch to the Bank tab above.';
+                msg.innerHTML = '<strong>⚠️ Connect Your Bank First!</strong><br>Switch to the "🏦 Bank" tab above to connect or create your bank!';
                 msg.classList.remove('hidden');
                 return;
             }
             
             try {
                 let pts = points;
-                if (boostEnabled && musdBalance >= 1) {
-                    pts = Math.floor(pts * 1.5);
-                }
+                let finalPts = pts;
+                
+                // Apply boost if enabled (the boost was already applied during quiz)
+                // We don't double-apply, just send the points we calculated
                 
                 msg.className = 'message info';
-                msg.textContent = '⏳ Saving to blockchain...';
+                msg.innerHTML = '<strong>⏳ Saving to your bank on the blockchain...</strong><br>This might take a few seconds. Please confirm in MetaMask!';
                 msg.classList.remove('hidden');
                 
                 const tx = await quiz.updateScore(userAddr, pts);
+                
+                msg.className = 'message info';
+                msg.innerHTML = '<strong>⏳ Transaction submitted!</strong><br>Waiting for blockchain confirmation...';
+                
                 await tx.wait();
                 
                 msg.className = 'message success';
-                msg.textContent = `✅ Saved! ${pts} points added to your bank!`;
+                msg.innerHTML = `<strong>✅ Success! Your Bank Got Bigger!</strong><br>${pts} points have been saved to your bank forever! 🎉`;
                 
                 document.getElementById('pendingPoints').textContent = '0';
                 document.getElementById('pendingPointsItem').classList.add('hidden');
@@ -966,16 +971,30 @@
                 if (boostEnabled) {
                     document.getElementById('boostToggle').checked = false;
                     boostEnabled = false;
+                    document.getElementById('boostActiveMsg').classList.add('hidden');
                 }
                 
                 setTimeout(() => {
-                    refreshBankData();
+                    if (userAddr) {
+                        refreshBankData();
+                    }
                     loadLeaderboard();
-                }, 1000);
+                }, 1500);
                 
             } catch (err) {
+                console.error('Save score error:', err);
                 msg.className = 'message error';
-                msg.textContent = `❌ Failed: ${err.message}\n\nMake sure you have tBTC for gas: faucet.test.mezo.org`;
+                let errorMsg = '<strong>❌ Oops! Something Went Wrong</strong><br>';
+                
+                if (err.message.includes('user rejected')) {
+                    errorMsg += 'You cancelled the transaction. No worries! Click "Save" again when ready.';
+                } else if (err.message.includes('insufficient funds')) {
+                    errorMsg += 'Not enough tBTC for gas fees. Get free tBTC from: <a href="https://faucet.test.mezo.org" target="_blank" style="color: #4facfe; font-weight: bold; text-decoration: underline;">faucet.test.mezo.org</a>';
+                } else {
+                    errorMsg += `Error: ${err.message}<br><br>💡 Tip: Make sure you have some tBTC for gas fees!`;
+                }
+                
+                msg.innerHTML = errorMsg;
                 msg.classList.remove('hidden');
             }
         }
