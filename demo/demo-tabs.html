@@ -1248,8 +1248,15 @@
                 
                 content.innerHTML = badgeHTML;
                 
-                /* OLD COMPLEX DISPLAY CODE - REMOVED FOR COMPACT VERSION
-                if (balance > 0) {
+            } catch (err) {
+                console.error('Badge check error:', err);
+                content.innerHTML = `<div class="message error">Error checking badge status: ${err.message}</div>`;
+            }
+        }
+        
+        /* OLD VERSION - REPLACED WITH COMPACT GRID DISPLAY
+        async function checkNFTStatus_OLD() {
+            if (false) { // Disabled old code
                     let badgeDisplay = `
                         <div style="text-align: center; margin: 20px 0;">
                             <div class="message success">
