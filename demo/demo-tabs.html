@@ -1338,6 +1338,8 @@
                 msg.className = 'message success';
                 msg.innerHTML = `<strong>✅ Success! Your Bank Got Bigger!</strong><br>${pts} points have been saved to your bank forever! 🎉`;
                 
+                // Reset points after successful save
+                points = 0;
                 document.getElementById('pendingPoints').textContent = '0';
                 document.getElementById('pendingPointsItem').classList.add('hidden');
                 
