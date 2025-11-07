@@ -903,6 +903,16 @@
             document.getElementById('pointsEarned').textContent = points;
             document.getElementById('wrongCount').textContent = wrongAnswers;
             
+            // Show boost applied message if boost was used
+            if (boostEnabled && musdBalance >= 1) {
+                document.getElementById('boostAppliedMessage').classList.remove('hidden');
+            }
+            
+            // Show wallet required message if not connected
+            if (!userAddr) {
+                document.getElementById('walletRequiredMsg').classList.remove('hidden');
+            }
+            
             if (userAddr) {
                 document.getElementById('pendingPointsItem').classList.remove('hidden');
                 document.getElementById('pendingPoints').textContent = points;
