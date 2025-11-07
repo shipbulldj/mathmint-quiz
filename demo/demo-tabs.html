@@ -1160,10 +1160,22 @@
                 const balance = parseInt(await nft.balanceOf(userAddr));
                 const savedScore = parseInt(await quiz.getScore(userAddr));
                 
-                // Determine which badges can be minted based on current points
-                const availableBadges = badgeTiers.filter(badge => savedScore >= badge.points);
-                const currentBadge = getBadgeForPoints(savedScore);
-                const nextBadge = getNextBadge(savedScore);
+                // Build compact badge grid display
+                let badgeHTML = `
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin: 20px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div>
+                                <strong style="font-size: 1.1em;">Your Progress:</strong><br>
+                                <span style="font-size: 0.95em; opacity: 0.9;">${balance} / 5 badges collected</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <strong style="font-size: 1.1em;">Points:</strong><br>
+                                <span style="font-size: 1.3em; color: #fbbf24;">${savedScore}</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 15px;">
+                `;
                 
                 // Display collected badges
                 if (balance > 0) {
