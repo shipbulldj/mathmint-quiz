@@ -1192,6 +1192,7 @@
         function showQuestion() {
             const q = quizQuestions[currentQuestion];
             document.getElementById('question').textContent = `${q.a} × ${q.b} = ?`;
+            document.getElementById('questionProgress').textContent = `Question ${currentQuestion + 1}/${totalQuestions}`;
             
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '';
@@ -1203,7 +1204,7 @@
                 optionsDiv.appendChild(btn);
             });
             
-            const progress = ((currentQuestion + 1) / 5) * 100;
+            const progress = ((currentQuestion + 1) / totalQuestions) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
             
             startTimer();
