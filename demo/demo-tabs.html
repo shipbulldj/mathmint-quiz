@@ -1171,9 +1171,20 @@
             wrongAnswers = 0;
             points = 0;
             
-            document.getElementById('quizStart').classList.add('hidden');
+            // Hide all start screens
+            document.getElementById('modeSelection').classList.add('hidden');
+            document.getElementById('tableSelection').classList.add('hidden');
             document.getElementById('quizResults').classList.add('hidden');
+            
+            // Show play screen
             document.getElementById('quizPlay').classList.remove('hidden');
+            
+            // Set mode label
+            let modeLabel = '';
+            if (currentMode === 'classic') modeLabel = '🎯 Classic Mode';
+            else if (currentMode === 'practice') modeLabel = `📚 Practice: ${practiceTable}x Table`;
+            else if (currentMode === 'rapid') modeLabel = '⚡ Rapid Fire';
+            document.getElementById('modeLabel').textContent = modeLabel;
             
             showQuestion();
         }
